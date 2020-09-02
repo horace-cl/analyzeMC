@@ -31,6 +31,16 @@
  #include "FWCore/Utilities/interface/InputTag.h"
  #include "DataFormats/TrackReco/interface/Track.h"
  #include "DataFormats/TrackReco/interface/TrackFwd.h"
+
+/*
+HCL
+ I will try to follow all information given here:
+ https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideDataFormatGeneratorInterface
+*/
+
+#include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/GenRunInfoProduct.h"
 //
 // class declaration
 //
@@ -98,26 +108,56 @@ MCanalyzer::~MCanalyzer()
 void
 MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-   using namespace edm;
 
-    Handle<TrackCollection> tracks;
-    iEvent.getByToken(tracksToken_, tracks);
-    for(TrackCollection::const_iterator itTrack = tracks->begin();
-        itTrack != tracks->end();
-        ++itTrack) {
-      // do something with track parameters, e.g, plot the charge.
-      // int charge = itTrack->charge();
+  std::cout << "HELLO FROM ANALYZER! " << std::endl;
+  
+  edm::Handle<edm:: HepMCProduct > genEvtHandle;
+  e.getByLabel( "generator", genEvtHandle) ;
+  const HepMC::GenEvent* Evt = genEvtHandle->GetEvent() ;
+  //
+  // this is an example loop over the hierarchy of vertices
+  //
+
+  int i=0;
+  std::cout << "HANDLE OBTAINED" << std::endl;
+  for ( HepMC::GenEvent::vertex_const_iterator
+            itVtx=Evt->vertices_begin(); itVtx!=Evt->vertices_end(); ++itVtx )
+    {
+          i++
+          //
+          // this is an example loop over particles coming out of each vertex in the loop
+          //
+          std::cout << "VERTEX ITERATOR " << i << std::endl;
+          for ( HepMC::GenVertex::particles_out_const_iterator
+                  itPartOut=(*itVtx)->particles_out_const_begin();
+                  itPartOut!=(*itVtx)->particles_out_const_end(); ++itPartOut )
+            {
+              std::cout << "PARTICLES? " << itPartOut << std::endl;
+               // and more of your code...
+            }
     }
 
-#ifdef THIS_IS_AN_EVENT_EXAMPLE
-   Handle<ExampleData> pIn;
-   iEvent.getByLabel("example",pIn);
-#endif
 
-#ifdef THIS_IS_AN_EVENTSETUP_EXAMPLE
-   ESHandle<SetupData> pSetup;
-   iSetup.get<SetupRecord>().get(pSetup);
-#endif
+//    using namespace edm;
+
+//     Handle<TrackCollection> tracks;
+//     iEvent.getByToken(tracksToken_, tracks);
+//     for(TrackCollection::const_iterator itTrack = tracks->begin();
+//         itTrack != tracks->end();
+//         ++itTrack) {
+//       // do something with track parameters, e.g, plot the charge.
+//       // int charge = itTrack->charge();
+//     }
+
+// #ifdef THIS_IS_AN_EVENT_EXAMPLE
+//    Handle<ExampleData> pIn;
+//    iEvent.getByLabel("example",pIn);
+// #endif
+
+// #ifdef THIS_IS_AN_EVENTSETUP_EXAMPLE
+//    ESHandle<SetupData> pSetup;
+//    iSetup.get<SetupRecord>().get(pSetup);
+// #endif
 }
 
 
