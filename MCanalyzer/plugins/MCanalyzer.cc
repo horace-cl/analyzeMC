@@ -112,7 +112,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
   
   edm::Handle<edm:: HepMCProduct > genEvtHandle;
-  e.getByLabel( "generator", genEvtHandle) ;
+  iEvent.getByLabel( "generator", genEvtHandle) ;
   const HepMC::GenEvent* Evt = genEvtHandle->GetEvent() ;
   //
   // this is an example loop over the hierarchy of vertices
@@ -132,7 +132,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                   itPartOut=(*itVtx)->particles_out_const_begin();
                   itPartOut!=(*itVtx)->particles_out_const_end(); ++itPartOut )
             {
-              std::cout << "PARTICLES? " << itPartOut << std::endl;
+              std::cout << "PARTICLES? " << std::endl;
                // and more of your code...
             }
     }
