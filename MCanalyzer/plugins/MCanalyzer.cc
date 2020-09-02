@@ -123,7 +123,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   for ( HepMC::GenEvent::vertex_const_iterator
             itVtx=Evt->vertices_begin(); itVtx!=Evt->vertices_end(); ++itVtx )
     {
-          i++
+          i++;
           //
           // this is an example loop over particles coming out of each vertex in the loop
           //
