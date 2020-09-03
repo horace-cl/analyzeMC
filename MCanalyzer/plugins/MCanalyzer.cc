@@ -149,13 +149,14 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
-  
+  edm::Handle<edm:: HepMCProduct > genEvtHandle;
+  iEvent.getByToken(hepmcproduct_, genEvtHandle);
 
   // double qScale = GenInfoHandle->qScale();
   // double pthat = ( GenInfoHandle->hasBinningValues() ? 
   //                 (GenInfoHandle->binningValues())[0] : 0.0);
   // cout << " qScale = " << qScale << " pthat = " << pthat << endl;
-  //const HepMC::GenEvent* Evt = genEvtHandle->GetEvent() ;
+  const HepMC::GenEvent* Evt = genEvtHandle->GetEvent() ;
   //
   // this is an example loop over the hierarchy of vertices
   //
