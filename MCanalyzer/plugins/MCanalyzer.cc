@@ -138,7 +138,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // double pthat = ( GenInfoHandle->hasBinningValues() ? 
   //                 (GenInfoHandle->binningValues())[0] : 0.0);
   // cout << " qScale = " << qScale << " pthat = " << pthat << endl;
-  const HepMC::GenEvent* iEvent = genEvtHandle->GetEvent() ;
+  //const HepMC::GenEvent* iEvent = genEvtHandle->GetEvent() ;
   //
   // this is an example loop over the hierarchy of vertices
   //
@@ -169,11 +169,12 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::cout << "\tPDG ID : " << (*p)->pdg_id() << std::endl;
     std::cout << "\tSTATUS : " << (*p)->status() << std::endl;
 
-    std::cout << "\tDaugthers : \n"<< std::endl;
+    std::cout << "\tDaugthers : " << (*p)->numberOfDaughters() << std::endl;
     //Ierate over its daughters
     for( HepMC::GenVertex::particle_iterator aDaughter=(*p)->end_vertex()->particles_begin(HepMC::descendants); aDaughter !=(*p)->end_vertex()->particles_end(HepMC::descendants);aDaughter++){
       std::cout << "\t\tPDG ID : " << (*aDaughter)->pdg_id() << std::endl;
       std::cout << "\t\tSTATUS : " << (*aDaughter)->status() << std::endl;
+      std::cout << "\t\tGrandDaughters : " << (*aDaughter)->numberOfDaughters() << std::endl;
     }
 
 
