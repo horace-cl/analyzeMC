@@ -82,10 +82,10 @@ class MCanalyzer : public edm::EDAnalyzer {
       edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
       edm::EDGetTokenT<edm::HepMCProduct> hepmcproduct_;
 
-      TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4;
+      TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
       TVector3       gen_b_vtx;
       TTree*         tree_;
-
+      std::vector<int>    daughter_id;
 };
 
 
@@ -134,6 +134,8 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   gen_muon1_p4.SetPxPyPzE(0.,0.,0.,0.);
   gen_muon2_p4.SetPxPyPzE(0.,0.,0.,0.);
   gen_b_vtx.SetXYZ(0.,0.,0.);
+  gen_gamma1_p4.SetPxPyPzE(0.,0.,0.,0.);
+  gen_gamma2_p4.SetPxPyPzE(0.,0.,0.,0.);
 
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
   edm::Handle<edm:: HepMCProduct > genEvtHandle;
@@ -253,6 +255,9 @@ MCanalyzer::beginJob()
   tree_->Branch("gen_muon1_p4",  "TLorentzVector",  &gen_muon1_p4);
   tree_->Branch("gen_muon2_p4",  "TLorentzVector",  &gen_muon2_p4);
   tree_->Branch("gen_b_vtx",    "TVector3",        &gen_b_vtx);
+  tree_->Branch("gen_gamma1_p4",  "TLorentzVector",  &gen_muon1_p4);
+  tree_->Branch("gen_gamma2_p4",  "TLorentzVector",  &gen_muon1_p4);
+  tree_->Branch("daughter_id",   "vector", &daughter_id);
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
