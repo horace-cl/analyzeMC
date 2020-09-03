@@ -41,9 +41,16 @@ HCL
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenRunInfoProduct.h"
 
-//WE NEED THIS ONE FOR MAKING THE NTUPLES
+//WE NEED THESE ONES FOR MAKING THE NTUPLES
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "TFile.h"
+#include "TTree.h"
+#include <vector>
+#include "TLorentzVector.h"
+#include "TVector3.h"
+#include <utility>
+#include <string>
 //
 // class declaration
 //
@@ -54,7 +61,7 @@ HCL
 // This will improve performance in multithreaded jobs.
 
 
-//using reco::TrackCollection;
+using reco::TrackCollection;
 
 class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
    public:
@@ -73,7 +80,11 @@ class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       // ----------member data ---------------------------
       edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
       edm::EDGetTokenT<edm::HepMCProduct> hepmcproduct_;
+
+      TTree*      tree_;
+
 };
+
 
 //
 // constants, enums and typedefs
