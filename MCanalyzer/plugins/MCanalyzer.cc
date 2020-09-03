@@ -119,7 +119,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<edm::HepMCProduct> genEvtHandle;
   iEvent.getByToken(hepmcproduct_, genEvtHandle);
 
-  const HepMC::GenEvent* Evt = genEvtHandle->GetEvent() ;
+  //const HepMC::GenEvent* Evt = genEvtHandle->GetEvent() ;
   //
   // this is an example loop over the hierarchy of vertices
   //
