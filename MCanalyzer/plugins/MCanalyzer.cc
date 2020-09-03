@@ -124,16 +124,34 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // this is an example loop over the hierarchy of vertices
   //
 
+  // from 
+  // Calibration/HcalCalibAlgos/plugins/SimAnalyzerMinbias.cc
   if (!genEvtHandle.isValid()) 
   {
       std::cout << " ------------->  no HepMCProduct found" << std::endl;    
   } 
-
-
   HepMC::GenEvent * myGenEvent = new  HepMC::GenEvent(*(genEvtHandle->GetEvent()));
   std::cout << "Event with : \n"; 
   std::cout << myGenEvent->particles_size() << " particles \n";
   std::cout << myGenEvent->vertices_size() << " vertices\n";
+
+
+
+  //from
+  // Alignment/OfflineValidation/plugins/ValidationMisalignedTracker.cc:
+  // Iterate over all particles
+  for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin(); p != myGenEvent->particles_end(); ++p ) { 
+
+    std::cout << "\tPDG ID : " << (*p)->pdg_id() << std::endl;
+    std::cout << "\tSTATUS : " << (*p)->status() << std::endl;
+
+    std::cout << "\tDaugthers : \n"<< std::endl;
+    //Ierate over its daughters
+    for( HepMC::GenVertex::particle_iterator aDaughter=(*p)->end_vertex()->particles_begin(HepMC::descendants); aDaughter !=(*p)->end_vertex()->particles_end(HepMC::descendants);aDaughter++){
+      std::cout << "\t\tPDG ID : " << (*aDaughter)->pdg_id() << std::endl;
+      std::cout << "\t\tSTATUS : " << (*aDaughter)->status() << std::endl;
+    }
+
 
 
   // for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
@@ -152,30 +170,30 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 
-
+  // VERTEX ITERATOR
   //FROM TWIKI 
   //https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideDataFormatGeneratorInterface
-  int i=0;
-  int j=0;
-  std::cout << "HANDLE OBTAINED" << std::endl;
-  for ( HepMC::GenEvent::vertex_const_iterator
-            itVtx=Evt->vertices_begin(); itVtx!=Evt->vertices_end(); ++itVtx )
-    {
-          i++;
-          j=0;
-          //
-          // this is an example loop over particles coming out of each vertex in the loop
-          //
+  // int i=0;
+  // int j=0;
+  // std::cout << "HANDLE OBTAINED" << std::endl;
+  // for ( HepMC::GenEvent::vertex_const_iterator
+  //           itVtx=Evt->vertices_begin(); itVtx!=Evt->vertices_end(); ++itVtx )
+  //   {
+  //         i++;
+  //         j=0;
+  //         //
+  //         // this is an example loop over particles coming out of each vertex in the loop
+  //         //
 
-          std::cout << "VERTEX ITERATOR " << i << std::endl;
-          for ( HepMC::GenVertex::particles_out_const_iterator
-                  itPartOut=(*itVtx)->particles_out_const_begin();
-                  itPartOut!=(*itVtx)->particles_out_const_end(); ++itPartOut )
-            {
-              j+=1;
-              std::cout << "PARTICLES " << j << std::endl;
-               // and more of your code...
-            }
+  //         std::cout << "VERTEX ITERATOR " << i << std::endl;
+  //         for ( HepMC::GenVertex::particles_out_const_iterator
+  //                 itPartOut=(*itVtx)->particles_out_const_begin();
+  //                 itPartOut!=(*itVtx)->particles_out_const_end(); ++itPartOut )
+  //           {
+  //             j+=1;
+  //             std::cout << "PARTICLES " << j << std::endl;
+  //              // and more of your code...
+  //           }
     }
 
 
