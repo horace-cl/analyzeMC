@@ -259,8 +259,8 @@ MCanalyzer::beginJob()
 void
 MCanalyzer::endJob()
 {
-  // tree_->GetDirectory()->cd();
-  // tree_->Write();
+  tree_->GetDirectory()->cd();
+  tree_->Write();
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
