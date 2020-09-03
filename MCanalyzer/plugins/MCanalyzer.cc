@@ -28,19 +28,22 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
- #include "FWCore/Utilities/interface/InputTag.h"
- #include "DataFormats/TrackReco/interface/Track.h"
- #include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "FWCore/Utilities/interface/InputTag.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
 
 /*
 HCL
  I will try to follow all information given here:
  https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideDataFormatGeneratorInterface
 */
-
 #include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenRunInfoProduct.h"
+
+//WE NEED THIS ONE FOR MAKING THE NTUPLES
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
 //
 // class declaration
 //
@@ -51,7 +54,7 @@ HCL
 // This will improve performance in multithreaded jobs.
 
 
-using reco::TrackCollection;
+//using reco::TrackCollection;
 
 class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
    public:
