@@ -126,35 +126,55 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   if (!genEvtHandle.isValid()) 
   {
-      std::cout << "no HepMCProduct found" << std::endl;    
+      std::cout << " -------->  no HepMCProduct found" << std::endl;    
   } 
   else 
   {
-      std::cout << "HepMCProduct found!" << std::endl;
+      const HepMC::GenEvent * myGenEvent = evtMC->GetEvent();
+      std::cout << "Event with " << myGenEvent->particles_size()
+             << " particles + " <<myGenEvent->vertices_size()
+             << " vertices";
   } 
 
 
-  HepMC::GenEvent * myGenEvent = new  HepMC::GenEvent(*(genEvtHandle->GetEvent()));
+  // for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
+  // p != myGenEvent->particles_end(); ++p ) 
+  //   {
+  //     // phiParticle = (*p)->momentum().phi();
+  //     // etaParticle = (*p)->momentum().eta();
+  //     // double pt  = (*p)->momentum().perp();
+  //     // mom_MC = (*p)->momentum().rho();
+  //     // if(pt > maxPt) { npart++; maxPt = pt; /*phi_MC = phiParticle; eta_MC = etaParticle;*/ }
+  //     // GlobalVector mom ((*p)->momentum().x(),(*p)->momentum().y(),(*p)->momentum().z());
+  //   }
+
+  //HepMC::GenEvent * myGenEvent = new  HepMC::GenEvent(*(genEvtHandle->GetEvent()));
   HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
+
+
 
 
   //FROM TWIKI 
   //https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideDataFormatGeneratorInterface
   int i=0;
+  int j=0;
   std::cout << "HANDLE OBTAINED" << std::endl;
   for ( HepMC::GenEvent::vertex_const_iterator
             itVtx=Evt->vertices_begin(); itVtx!=Evt->vertices_end(); ++itVtx )
     {
           i++;
+          j=0;
           //
           // this is an example loop over particles coming out of each vertex in the loop
           //
+
           std::cout << "VERTEX ITERATOR " << i << std::endl;
           for ( HepMC::GenVertex::particles_out_const_iterator
                   itPartOut=(*itVtx)->particles_out_const_begin();
                   itPartOut!=(*itVtx)->particles_out_const_end(); ++itPartOut )
             {
-              std::cout << "PARTICLES? " << std::endl;
+              j+=1
+              std::cout << "PARTICLES " << j << std::endl;
                // and more of your code...
             }
     }
