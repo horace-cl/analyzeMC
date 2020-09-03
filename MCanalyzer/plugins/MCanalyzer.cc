@@ -143,7 +143,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin(); p != myGenEvent->particles_end(); ++p ) { 
 
     if (abs((*p)->pdg_id())!=521){
-      std::cout << "\t\tNot B+\n";
+      //std::cout << "\t\tNot B+\n";
       continue;
     }
 
