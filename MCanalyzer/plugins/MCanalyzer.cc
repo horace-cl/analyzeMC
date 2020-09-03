@@ -104,6 +104,25 @@ MCanalyzer::~MCanalyzer()
 }
 
 
+void
+MCanalyzer::beginJob()
+{
+
+  std::cout << "Beginning analyzer job" << std::endl;
+
+  edm::Service<TFileService> fs;
+  tree_ = fs->make<TTree>("ntuple","B+->K+ mu mu ntuple");
+
+  tree_->Branch("gen_b_p4",     "TLorentzVector",  &gen_b_p4);
+  tree_->Branch("gen_kaon_p4",  "TLorentzVector",  &gen_kaon1_p4);
+  tree_->Branch("gen_muon1_p4",  "TLorentzVector",  &gen_muon1_p4);
+  tree_->Branch("gen_muon2_p4",  "TLorentzVector",  &gen_muon2_p4);
+  tree_->Branch("gen_b_vtx",    "TVector3",        &gen_b_vtx);
+}
+
+
+
+
 //
 // member functions
 //
@@ -116,9 +135,10 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
   
 
-  edm::Handle<edm::HepMCProduct> genEvtHandle;
-  iEvent.getByToken(hepmcproduct_, genEvtHandle);
-
+  // double qScale = GenInfoHandle->qScale();
+  // double pthat = ( GenInfoHandle->hasBinningValues() ? 
+  //                 (GenInfoHandle->binningValues())[0] : 0.0);
+  // cout << " qScale = " << qScale << " pthat = " << pthat << endl;
   //const HepMC::GenEvent* Evt = genEvtHandle->GetEvent() ;
   //
   // this is an example loop over the hierarchy of vertices
