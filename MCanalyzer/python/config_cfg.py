@@ -14,6 +14,11 @@ process.source = cms.Source("PoolSource",
                 )
                             )
 
+process.TFileService = cms.Service("TFileService",
+#        fileName = cms.string('Rootuple_BstoJpsiphi_2018_MiniAOD.root'),
+         fileName = cms.string('Rootuple_ONLYGEN.root'),                                  
+)
+
 process.demo = cms.EDAnalyzer('MCanalyzer'
                               )
 

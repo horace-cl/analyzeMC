@@ -176,6 +176,9 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::cout << "\tPDG ID : " << (*p)->pdg_id() << std::endl;
     std::cout << "\tSTATUS : " << (*p)->status() << std::endl;
 
+    std::cout << "PX " << (*p)->momentum().px() << std::endl;
+    std::cout << "MASS " << (*p)->momentum().m() << std::endl; 
+
     gen_b_p4.SetPxPyPzE((*p)->momentum().px(),(*p)->momentum().py(),(*p)->momentum().pz(),(*p)->momentum().e());
 
     //std::cout << "\tDaugthers : " << (*p)->numberOfDaughters() << std::endl;
