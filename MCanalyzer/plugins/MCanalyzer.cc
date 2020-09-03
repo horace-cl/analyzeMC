@@ -131,10 +131,10 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
 
-  gen_b_p4.SetPtEtaPhiM(0.,0.,0.,0.);
-  gen_kaon_p4.SetPtEtaPhiM(0.,0.,0.,0.);
-  gen_muon1_p4.SetPtEtaPhiM(0.,0.,0.,0.);
-  gen_muon2_p4.SetPtEtaPhiM(0.,0.,0.,0.);
+  gen_b_p4.SetPxPyPzE(0.,0.,0.,0.);
+  gen_kaon_p4.SetPxPyPzE(0.,0.,0.,0.);
+  gen_muon1_p4.SetPxPyPzE(0.,0.,0.,0.);
+  gen_muon2_p4.SetPxPyPzE(0.,0.,0.,0.);
   gen_b_vtx.SetXYZ(0.,0.,0.);
 
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
@@ -176,7 +176,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::cout << "\tPDG ID : " << (*p)->pdg_id() << std::endl;
     std::cout << "\tSTATUS : " << (*p)->status() << std::endl;
 
-    gen_b_p4.SetPtEtaPhiM((*p)->momentum().pt(),(*p)->momentum().eta(),(*p)->momentum().phi(),(*p)->momentum().mass());
+    gen_b_p4.SetPxPyPzE((*p)->momentum().px(),(*p)->momentum().py(),(*p)->momentum().pz(),(*p)->momentum().e());
 
     //std::cout << "\tDaugthers : " << (*p)->numberOfDaughters() << std::endl;
     std::cout << "\tDaugthers : " << std::endl;
