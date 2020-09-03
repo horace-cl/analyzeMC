@@ -142,6 +142,10 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Iterate over all particles
   for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin(); p != myGenEvent->particles_end(); ++p ) { 
 
+    if (abs((*p)->pdg_id())!=521){
+      std::cout << "\t\tNot B+"
+    }
+
     std::cout << "\tPDG ID : " << (*p)->pdg_id() << std::endl;
     std::cout << "\tSTATUS : " << (*p)->status() << std::endl;
 
@@ -166,7 +170,6 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //   }
 
   
-  HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
 
 
 
