@@ -88,7 +88,10 @@ MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
  //  tracksToken_(consumes<TrackCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tracks")))
 
 {
-   //now do what ever initialization is needed
+
+  std::cout << "INITIALIZER?" << std::endl;
+  hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generator"));
+  
 
 }
 
@@ -113,8 +116,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
   
-  hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generator"));
-  
+
   edm::Handle<edm::HepMCProduct> genEvtHandle;
   iEvent.getByToken(hepmcproduct_, genEvtHandle);
 
