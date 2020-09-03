@@ -90,7 +90,7 @@ MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
 {
 
   //std::cout << "INITIALIZER?" << std::endl;
-  hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generator"));
+  hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generatorSmeared"));
   
 }
 
