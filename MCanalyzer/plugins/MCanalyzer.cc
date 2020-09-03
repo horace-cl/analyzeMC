@@ -126,11 +126,11 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   if (!genEvtHandle.isValid()) 
   {
-      std::cout << " -------->  no HepMCProduct found" << std::endl;    
+      std::cout << " ------------->  no HepMCProduct found" << std::endl;    
   } 
   else 
   {
-      const HepMC::GenEvent * myGenEvent = evtMC->GetEvent();
+      HepMC::GenEvent * myGenEvent = new  HepMC::GenEvent(*(genEvtHandle->GetEvent()));
       std::cout << "Event with : \n"; 
       std::cout << myGenEvent->particles_size() << " particles \n";
       std::cout << myGenEvent->vertices_size() << " vertices\n";
@@ -148,7 +148,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //     // GlobalVector mom ((*p)->momentum().x(),(*p)->momentum().y(),(*p)->momentum().z());
   //   }
 
-  //HepMC::GenEvent * myGenEvent = new  HepMC::GenEvent(*(genEvtHandle->GetEvent()));
+  
   HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
 
 
