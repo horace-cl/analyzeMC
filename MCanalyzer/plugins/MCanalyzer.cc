@@ -81,9 +81,9 @@ class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
       edm::EDGetTokenT<edm::HepMCProduct> hepmcproduct_;
 
-      TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4;
-      TVector3       gen_b_vtx;
-      TTree*         tree_;
+      // TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4;
+      // TVector3       gen_b_vtx;
+      // TTree*         tree_;
 
 };
 
@@ -128,11 +128,11 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
 
-  gen_b_p4.SetPxPyPzE(0.,0.,0.,0.);
-  gen_kaon_p4.SetPxPyPzE(0.,0.,0.,0.);
-  gen_muon1_p4.SetPxPyPzE(0.,0.,0.,0.);
-  gen_muon2_p4.SetPxPyPzE(0.,0.,0.,0.);
-  gen_b_vtx.SetXYZ(0.,0.,0.);
+  // gen_b_p4.SetPxPyPzE(0.,0.,0.,0.);
+  // gen_kaon_p4.SetPxPyPzE(0.,0.,0.,0.);
+  // gen_muon1_p4.SetPxPyPzE(0.,0.,0.,0.);
+  // gen_muon2_p4.SetPxPyPzE(0.,0.,0.,0.);
+  // gen_b_vtx.SetXYZ(0.,0.,0.);
 
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
   edm::Handle<edm:: HepMCProduct > genEvtHandle;
@@ -176,7 +176,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::cout << "PX " << (*p)->momentum().px() << std::endl;
     std::cout << "MASS " << (*p)->momentum().m() << std::endl; 
 
-    gen_b_p4.SetPxPyPzE((*p)->momentum().px(),(*p)->momentum().py(),(*p)->momentum().pz(),(*p)->momentum().e());
+    //gen_b_p4.SetPxPyPzE((*p)->momentum().px(),(*p)->momentum().py(),(*p)->momentum().pz(),(*p)->momentum().e());
 
     //std::cout << "\tDaugthers : " << (*p)->numberOfDaughters() << std::endl;
     std::cout << "\tDaugthers : " << std::endl;
@@ -188,7 +188,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
 
-  tree_->Fill();
+  //tree_->Fill();
 
   // for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
   // p != myGenEvent->particles_end(); ++p ) 
@@ -241,22 +241,22 @@ MCanalyzer::beginJob()
 {
   std::cout << "Beginning analyzer job" << std::endl;
 
-  edm::Service<TFileService> fs;
-  tree_ = fs->make<TTree>("ntuple","B+->K+ mu mu ntuple");
+  // edm::Service<TFileService> fs;
+  // tree_ = fs->make<TTree>("ntuple","B+->K+ mu mu ntuple");
 
-  tree_->Branch("gen_b_p4",     "TLorentzVector",  &gen_b_p4);
-  tree_->Branch("gen_kaon_p4",  "TLorentzVector",  &gen_kaon_p4);
-  tree_->Branch("gen_muon1_p4",  "TLorentzVector",  &gen_muon1_p4);
-  tree_->Branch("gen_muon2_p4",  "TLorentzVector",  &gen_muon2_p4);
-  tree_->Branch("gen_b_vtx",    "TVector3",        &gen_b_vtx);
+  // tree_->Branch("gen_b_p4",     "TLorentzVector",  &gen_b_p4);
+  // tree_->Branch("gen_kaon_p4",  "TLorentzVector",  &gen_kaon_p4);
+  // tree_->Branch("gen_muon1_p4",  "TLorentzVector",  &gen_muon1_p4);
+  // tree_->Branch("gen_muon2_p4",  "TLorentzVector",  &gen_muon2_p4);
+  // tree_->Branch("gen_b_vtx",    "TVector3",        &gen_b_vtx);
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void
 MCanalyzer::endJob()
 {
-  tree_->GetDirectory()->cd();
-  tree_->Write();
+  // tree_->GetDirectory()->cd();
+  // tree_->Write();
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
