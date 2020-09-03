@@ -89,7 +89,7 @@ MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
 
 {
 
-  std::cout << "INITIALIZER?" << std::endl;
+  //std::cout << "INITIALIZER?" << std::endl;
   hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generator"));
   
 }
@@ -124,6 +124,22 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // this is an example loop over the hierarchy of vertices
   //
 
+  if (!genEvtHandle.isValid()) 
+  {
+      std::cout << "no HepMCProduct found" << std::endl;    
+  } 
+  else 
+  {
+      std::cout << "HepMCProduct found!" << std::endl;
+  } 
+
+
+  HepMC::GenEvent * myGenEvent = new  HepMC::GenEvent(*(evtMC->GetEvent()));
+  HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
+
+
+  //FROM TWIKI 
+  //https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideDataFormatGeneratorInterface
   int i=0;
   std::cout << "HANDLE OBTAINED" << std::endl;
   for ( HepMC::GenEvent::vertex_const_iterator
