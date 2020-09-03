@@ -81,7 +81,9 @@ class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
       edm::EDGetTokenT<edm::HepMCProduct> hepmcproduct_;
 
-      TTree*      tree_;
+      TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon1_p4,gen_kaon2_p4,gen_jpsi_p4,gen_muon1_p4,gen_muon2_p4;
+      TVector3       gen_b_vtx;
+      TTree*         tree_;
 
 };
 
