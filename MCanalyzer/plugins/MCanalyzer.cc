@@ -62,6 +62,7 @@ class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
 
    private:
+      const edm::EDGetTokenT<edm:: HepMCProduct> hepmcproduct_;
       virtual void beginJob() override;
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
@@ -112,7 +113,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
   
   edm::Handle<edm:: HepMCProduct > genEvtHandle;
-  iEvent.getByLabel( "generator", genEvtHandle) ;
+  iEvent.getByToken(hepmcproduct_, genEvtHandle) ;
   const HepMC::GenEvent* Evt = genEvtHandle->GetEvent() ;
   //
   // this is an example loop over the hierarchy of vertices
