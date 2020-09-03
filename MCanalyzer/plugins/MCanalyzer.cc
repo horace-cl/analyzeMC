@@ -22,7 +22,7 @@
 
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/one/EDAnalyzer.h"
+#include "FWCore/Framework/interface/EDAnalyzer.h"
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
@@ -63,7 +63,8 @@ HCL
 
 using reco::TrackCollection;
 
-class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
+//class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
+class MCanalyzer : public edm::EDAnalyzer {
    public:
       explicit MCanalyzer(const edm::ParameterSet&);
       ~MCanalyzer();
@@ -81,9 +82,9 @@ class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
       edm::EDGetTokenT<edm::HepMCProduct> hepmcproduct_;
 
-      // TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4;
-      // TVector3       gen_b_vtx;
-      // TTree*         tree_;
+      TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4;
+      TVector3       gen_b_vtx;
+      TTree*         tree_;
 
 };
 
@@ -102,7 +103,7 @@ class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
 {
 
-  //std::cout << "INITIALIZER?" << std::endl;
+  std::cout << "INITIALIZER?" << std::endl;
   hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generatorSmeared"));
   
 }
@@ -128,11 +129,11 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
 
-  // gen_b_p4.SetPxPyPzE(0.,0.,0.,0.);
-  // gen_kaon_p4.SetPxPyPzE(0.,0.,0.,0.);
-  // gen_muon1_p4.SetPxPyPzE(0.,0.,0.,0.);
-  // gen_muon2_p4.SetPxPyPzE(0.,0.,0.,0.);
-  // gen_b_vtx.SetXYZ(0.,0.,0.);
+  gen_b_p4.SetPxPyPzE(0.,0.,0.,0.);
+  gen_kaon_p4.SetPxPyPzE(0.,0.,0.,0.);
+  gen_muon1_p4.SetPxPyPzE(0.,0.,0.,0.);
+  gen_muon2_p4.SetPxPyPzE(0.,0.,0.,0.);
+  gen_b_vtx.SetXYZ(0.,0.,0.);
 
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
   edm::Handle<edm:: HepMCProduct > genEvtHandle;
