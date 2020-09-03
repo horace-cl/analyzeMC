@@ -85,7 +85,7 @@ class MCanalyzer : public edm::EDAnalyzer {
       TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
       TVector3       gen_b_vtx;
       TTree*         tree_;
-      std::vector<int>    daughter_id;
+      std::vector<std::vector<int>>    daughter_id;
 };
 
 
@@ -181,6 +181,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::cout << "PZ " << (*p)->momentum().pz() << std::endl;
     std::cout << "ENERGY " << (*p)->momentum().e() << std::endl;
     std::cout << "MASS " << (*p)->momentum().m() << std::endl; 
+    std::vector<int> ids;
 
     gen_b_p4.SetPxPyPzE((*p)->momentum().px(),(*p)->momentum().py(),(*p)->momentum().pz(),(*p)->momentum().e());
 
@@ -188,11 +189,16 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::cout << "\tDaugthers : " << std::endl;
     //Ierate over its daughters
     for( HepMC::GenVertex::particle_iterator aDaughter=(*p)->end_vertex()->particles_begin(HepMC::descendants); aDaughter !=(*p)->end_vertex()->particles_end(HepMC::descendants);aDaughter++){
+      ids.push_back((*aDaughter)->pdg_id());
       std::cout << "\t\tPDG ID : " << (*aDaughter)->pdg_id() << std::endl;
       std::cout << "\t\tSTATUS : " << (*aDaughter)->status() << std::endl;
+      if (abs((*aDaughter)->pdg_id())==321){
+          gen_kaon_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
+      }
       //std::cout << "\t\tGrandDaughters : " << (*aDaughter)->numberOfDaughters() << std::endl;
     }
-
+    std::cout << "Number of Daugthers : "<< ids.size() <<std::endl;
+  daughter_id.push_back(ids);
 
   tree_->Fill();
 
