@@ -196,28 +196,41 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       HepMC::GenVertex::particle_iterator aDaughter=(*p)->end_vertex()->particles_begin(HepMC::descendants); 
       aDaughter !=(*p)->end_vertex()->particles_end(HepMC::descendants);
       aDaughter++)
-      {
+    {
+      //Just a vector to have control over all daugther particles
       ids.push_back((*aDaughter)->pdg_id());
       std::cout << "\t\tPDG ID : " << (*aDaughter)->pdg_id() << std::endl;
       std::cout << "\t\tSTATUS : " << (*aDaughter)->status() << std::endl;
+
+      //KAON MUST HAVE THE SAME SIGN AS THE B CHARGED MESON
       if (abs((*aDaughter)->pdg_id())==321){
           gen_kaon_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());}
-	if ((*aDaughter)->pdg_id()==13){
-           gen_muon1_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());}
-	if ((*aDaughter)->pdg_id()==-13){
-           gen_muon2_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());}
-	if ((*aDaughter)->pdg_id()==22){
-           if (photons==0){
-           gen_gamma1_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
-           }
-	   else{
-	     gen_gamma2_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
-		}
-	photons++;
+      // MUONS - INDEX 1 WILL BE ASSIGNED TO THE MUON WITH OPPOSITE SIGN WRT KAON
+      // THETA L IS THE AGNLE BEWTEEN THESE TWO (KAON - MUON1)
+	    else if (abs((*aDaughter)->pdg_id())==13){
+        //CHECK IS THE CURRENT MUON HAS THE SAME SIGN AS THE B MESON
+        if ((*p)->pdg_id()*(*aDaughter)->pdg_id() == 1){
+          gen_muon2_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
+        }
+        else {
+          gen_muon1_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
+        }
+      }
+      // IN CASE THERE ARE ANY PHOTONS
+      else if ((*aDaughter)->pdg_id()==22){
+        if (photons==0){
+          gen_gamma1_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
+        }
+        else{
+          gen_gamma2_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
+        }
+        photons++;
       //std::cout << "\t\tGrandDaughters : " << (*aDaughter)->numberOfDaughters() << std::endl;
       }
-      }
-    std::cout << "Number of Daugthers : "<< ids.size() <<std::endl;
+    }
+
+
+  std::cout << "Number of Daugthers : "<< ids.size() <<std::endl;
   daughter_id.push_back(ids);
   number_daughters.push_back(ids.size());
 
