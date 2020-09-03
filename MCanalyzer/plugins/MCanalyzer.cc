@@ -128,13 +128,12 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   {
       std::cout << " ------------->  no HepMCProduct found" << std::endl;    
   } 
-  else 
-  {
-      HepMC::GenEvent * myGenEvent = new  HepMC::GenEvent(*(genEvtHandle->GetEvent()));
-      std::cout << "Event with : \n"; 
-      std::cout << myGenEvent->particles_size() << " particles \n";
-      std::cout << myGenEvent->vertices_size() << " vertices\n";
-  } 
+
+
+  HepMC::GenEvent * myGenEvent = new  HepMC::GenEvent(*(genEvtHandle->GetEvent()));
+  std::cout << "Event with : \n"; 
+  std::cout << myGenEvent->particles_size() << " particles \n";
+  std::cout << myGenEvent->vertices_size() << " vertices\n";
 
 
   // for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
@@ -180,26 +179,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
 
-//    using namespace edm;
 
-//     Handle<TrackCollection> tracks;
-//     iEvent.getByToken(tracksToken_, tracks);
-//     for(TrackCollection::const_iterator itTrack = tracks->begin();
-//         itTrack != tracks->end();
-//         ++itTrack) {
-//       // do something with track parameters, e.g, plot the charge.
-//       // int charge = itTrack->charge();
-//     }
-
-// #ifdef THIS_IS_AN_EVENT_EXAMPLE
-//    Handle<ExampleData> pIn;
-//    iEvent.getByLabel("example",pIn);
-// #endif
-
-// #ifdef THIS_IS_AN_EVENTSETUP_EXAMPLE
-//    ESHandle<SetupData> pSetup;
-//    iSetup.get<SetupRecord>().get(pSetup);
-// #endif
 }
 
 
