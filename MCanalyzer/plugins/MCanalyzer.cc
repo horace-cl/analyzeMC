@@ -113,6 +113,8 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
   
+  hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generator"));
+  
   edm::Handle<edm::HepMCProduct> genEvtHandle;
   iEvent.getByToken(hepmcproduct_, genEvtHandle);
 
