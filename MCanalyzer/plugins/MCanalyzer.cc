@@ -81,7 +81,7 @@ class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
       edm::EDGetTokenT<edm::HepMCProduct> hepmcproduct_;
 
-      TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon1_p4,gen_kaon2_p4,gen_jpsi_p4,gen_muon1_p4,gen_muon2_p4;
+      TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4;
       TVector3       gen_b_vtx;
       TTree*         tree_;
 
@@ -130,6 +130,13 @@ void
 MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
+
+  gen_b_p4.SetPtEtaPhiM(0.,0.,0.,0.);
+  gen_kaon_p4.SetPtEtaPhiM(0.,0.,0.,0.);
+  gen_muon1_p4.SetPtEtaPhiM(0.,0.,0.,0.);
+  gen_muon2_p4.SetPtEtaPhiM(0.,0.,0.,0.);
+  gen_b_vtx.SetXYZ(0.,0.,0.);
+
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
   edm::Handle<edm:: HepMCProduct > genEvtHandle;
   iEvent.getByToken(hepmcproduct_, genEvtHandle);
@@ -156,7 +163,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 
-  //from
+  // from
   // Alignment/OfflineValidation/plugins/ValidationMisalignedTracker.cc:
   // Iterate over all particles
   for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin(); p != myGenEvent->particles_end(); ++p ) { 
@@ -169,15 +176,19 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::cout << "\tPDG ID : " << (*p)->pdg_id() << std::endl;
     std::cout << "\tSTATUS : " << (*p)->status() << std::endl;
 
-    std::cout << "\tDaugthers : " << (*p)->numberOfDaughters() << std::endl;
+    gen_b_p4.SetPtEtaPhiM((*p)->momentum().pt(),(*p)->momentum().eta(),(*p)->momentum().phi(),(*p)->momentum().mass());
+
+    //std::cout << "\tDaugthers : " << (*p)->numberOfDaughters() << std::endl;
+    std::cout << "\tDaugthers : " << std::endl;
     //Ierate over its daughters
     for( HepMC::GenVertex::particle_iterator aDaughter=(*p)->end_vertex()->particles_begin(HepMC::descendants); aDaughter !=(*p)->end_vertex()->particles_end(HepMC::descendants);aDaughter++){
       std::cout << "\t\tPDG ID : " << (*aDaughter)->pdg_id() << std::endl;
       std::cout << "\t\tSTATUS : " << (*aDaughter)->status() << std::endl;
-      std::cout << "\t\tGrandDaughters : " << (*aDaughter)->numberOfDaughters() << std::endl;
+      //std::cout << "\t\tGrandDaughters : " << (*aDaughter)->numberOfDaughters() << std::endl;
     }
 
 
+  tree_->Fill();
 
   // for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
   // p != myGenEvent->particles_end(); ++p ) 
@@ -234,7 +245,7 @@ MCanalyzer::beginJob()
   tree_ = fs->make<TTree>("ntuple","B+->K+ mu mu ntuple");
 
   tree_->Branch("gen_b_p4",     "TLorentzVector",  &gen_b_p4);
-  tree_->Branch("gen_kaon_p4",  "TLorentzVector",  &gen_kaon1_p4);
+  tree_->Branch("gen_kaon_p4",  "TLorentzVector",  &gen_kaon_p4);
   tree_->Branch("gen_muon1_p4",  "TLorentzVector",  &gen_muon1_p4);
   tree_->Branch("gen_muon2_p4",  "TLorentzVector",  &gen_muon2_p4);
   tree_->Branch("gen_b_vtx",    "TVector3",        &gen_b_vtx);
@@ -244,6 +255,8 @@ MCanalyzer::beginJob()
 void
 MCanalyzer::endJob()
 {
+  tree_->GetDirectory()->cd();
+  tree_->Write();
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
