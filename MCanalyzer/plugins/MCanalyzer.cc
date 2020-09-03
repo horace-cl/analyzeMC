@@ -131,9 +131,9 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   else 
   {
       const HepMC::GenEvent * myGenEvent = evtMC->GetEvent();
-      std::cout << "Event with " << myGenEvent->particles_size()
-             << " particles + " <<myGenEvent->vertices_size()
-             << " vertices";
+      std::cout << "Event with : \n"; 
+      std::cout << myGenEvent->particles_size() << " particles \n";
+      std::cout << myGenEvent->vertices_size() << " vertices\n";
   } 
 
 
@@ -173,7 +173,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                   itPartOut=(*itVtx)->particles_out_const_begin();
                   itPartOut!=(*itVtx)->particles_out_const_end(); ++itPartOut )
             {
-              j+=1
+              j+=1;
               std::cout << "PARTICLES " << j << std::endl;
                // and more of your code...
             }
