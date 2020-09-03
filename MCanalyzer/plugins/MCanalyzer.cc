@@ -100,12 +100,10 @@ class MCanalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 // constructors and destructor
 //
 MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
- // :
- //  tracksToken_(consumes<TrackCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tracks")))
-
 {
 
   //std::cout << "INITIALIZER?" << std::endl;
+  tree_(0);
   hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generatorSmeared"));
   
 }
