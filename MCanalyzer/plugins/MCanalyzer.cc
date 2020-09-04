@@ -51,6 +51,7 @@ HCL
 #include "TVector3.h"
 #include <utility>
 #include <string>
+#include "Math/GenVector/Boost.h"
 //
 // class declaration
 //
@@ -88,6 +89,7 @@ class MCanalyzer : public edm::EDAnalyzer {
       std::vector<std::vector<int>>    daughter_id;
      // std::vector<int> number_daughters;
       int number_daughters;
+      float costhetaL, costhetaKL;
 };
 
 
@@ -103,7 +105,7 @@ class MCanalyzer : public edm::EDAnalyzer {
 // constructors and destructor
 //
 MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
- :number_daughters(0)
+ :number_daughters(0), costhetaL(0.0), costhetaKL(0.0)
 {
 
   std::cout << "INITIALIZER?" << std::endl;
@@ -231,6 +233,23 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     }
 
+    // NOW CREATE THE BOOST TO DILEPTON CM FRAME
+    TLorentzVector dilep = gen_muon1_p4+gen_muon2_p4
+    ROOT::Math::Boost cmboost(dilep.BoostToCM());
+
+    TLorentzVector kaonCM(  cmboost( gen_kaon_p4 )  );
+    TLorentzVector muonCM1(  cmboost( gen_muon1_p4 )  );
+    TLorentzVector muonCM2(  cmboost( gen_muon2_p4 )  );
+
+
+    costhetaL = ( muonCM1.x()*muonCM2.x() 
+                       + muonCM1.y()*muonCM2.y() 
+                       + muonCM1.z()*muonCM2.z() ) / (muonCM1.P()*muonCM2.P() );
+
+    costhetaKL = ( muonCM1.x()*kaonCM.x()
+                       + muonCM1.y()*kaonCM.y()
+                       + muonCM1.z()*kaonCM.z() ) / (muonCM1.P()*kaonCM.P() );
+
   
   std::cout << "Number of Daugthers : "<< ids.size() <<std::endl;
   daughter_id.push_back(ids);
@@ -302,6 +321,8 @@ MCanalyzer::beginJob()
   tree_->Branch("gen_gamma2_p4",  "TLorentzVector",  &gen_muon1_p4);
   tree_->Branch("daughter_id",   "vector", &daughter_id);
   tree_->Branch("number_daughters",  &number_daughters);
+  tree_->Branch("costhetaL",  &costhetaL);
+  tree_->Branch("costhetaKL",  &costhetaKL);
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
