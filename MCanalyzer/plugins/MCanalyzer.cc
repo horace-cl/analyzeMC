@@ -52,6 +52,11 @@ HCL
 #include <utility>
 #include <string>
 #include "Math/GenVector/Boost.h"
+#include "TVector3.h"
+#include "TMatrixD.h"
+#include <Math/VectorUtil.h>
+#include "DataFormats/Math/interface/LorentzVector.h"
+#include "CommonTools/CandUtils/interface/Booster.h"
 //
 // class declaration
 //
@@ -235,12 +240,16 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     // NOW CREATE THE BOOST TO DILEPTON CM FRAME
     TLorentzVector sum = gen_muon1_p4+gen_muon2_p4;
-    math::XYZTLorentzVector dilep = sum;
+    math::XYZTLorentzVector muon1(gen_muon1_p4.Px(), gen_muon1_p4.Py(), gen_muon1_p4.Pz(), gen_muon1_p4.E());
+    math::XYZTLorentzVector muon2(gen_muon2_p4.Px(), gen_muon2_p4.Py(), gen_muon2_p4.Pz(), gen_muon2_p4.E());
+    math::XYZTLorentzVector kaon(gen_kaon_p4.Px(), gen_kaon_p4.Py(), gen_kaon_p4.Pz(), gen_kaon_p4.E());
+   
+    math::XYZTLorentzVector dilep = muon1+muon2;
     ROOT::Math::Boost cmboost(dilep.BoostToCM());
 
-    math::XYZTLorentzVector kaonCM(  cmboost( gen_kaon_p4 )  );
-    math::XYZTLorentzVector muonCM1(  cmboost( gen_muon1_p4 )  );
-    math::XYZTLorentzVector muonCM2(  cmboost( gen_muon2_p4 )  );
+    math::XYZTLorentzVector kaonCM(  cmboost( kaon )  );
+    math::XYZTLorentzVector muonCM1(  cmboost( muon1 )  );
+    math::XYZTLorentzVector muonCM2(  cmboost( muon2 )  );
 
 
     costhetaL = ( muonCM1.x()*muonCM2.x() 
