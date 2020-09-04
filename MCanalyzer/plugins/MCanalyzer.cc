@@ -234,12 +234,13 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     // NOW CREATE THE BOOST TO DILEPTON CM FRAME
-    TLorentzVector dilep = gen_muon1_p4+gen_muon2_p4
+    TLorentzVector sum = gen_muon1_p4+gen_muon2_p4;
+    math::XYZTLorentzVector dilep = sum;
     ROOT::Math::Boost cmboost(dilep.BoostToCM());
 
-    TLorentzVector kaonCM(  cmboost( gen_kaon_p4 )  );
-    TLorentzVector muonCM1(  cmboost( gen_muon1_p4 )  );
-    TLorentzVector muonCM2(  cmboost( gen_muon2_p4 )  );
+    math::XYZTLorentzVector kaonCM(  cmboost( gen_kaon_p4 )  );
+    math::XYZTLorentzVector muonCM1(  cmboost( gen_muon1_p4 )  );
+    math::XYZTLorentzVector muonCM2(  cmboost( gen_muon2_p4 )  );
 
 
     costhetaL = ( muonCM1.x()*muonCM2.x() 
