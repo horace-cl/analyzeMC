@@ -86,7 +86,8 @@ class MCanalyzer : public edm::EDAnalyzer {
       TVector3       gen_b_vtx;
       TTree*         tree_;
       std::vector<std::vector<int>>    daughter_id;
-      std::vector<int> number_daughters;
+     // std::vector<int> number_daughters;
+      int number_daughters;
 };
 
 
@@ -102,6 +103,7 @@ class MCanalyzer : public edm::EDAnalyzer {
 // constructors and destructor
 //
 MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
+ :number_daughters(0)
 {
 
   std::cout << "INITIALIZER?" << std::endl;
@@ -205,7 +207,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //KAON MUST HAVE THE SAME SIGN AS THE B CHARGED MESON
       if (abs((*aDaughter)->pdg_id())==321){
           gen_kaon_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());}
-      // MUONS - INDEX 1 WILL BE ASSIGNED TO THE MUON WITH OPPOSITE SIGN WRT KAON
+      // muons - INDEX 1 WILL BE ASSIGNED TO THE MUON WITH OPPOSITE SIGN WRT KAON
       // THETA L IS THE AGNLE BEWTEEN THESE TWO (KAON - MUON1)
 	    else if (abs((*aDaughter)->pdg_id())==13){
         //CHECK IS THE CURRENT MUON HAS THE SAME SIGN AS THE B MESON
@@ -229,12 +231,13 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     }
 
-
+  
   std::cout << "Number of Daugthers : "<< ids.size() <<std::endl;
   daughter_id.push_back(ids);
-  number_daughters.push_back(ids.size());
+  number_daughters= ids.size();
 
   tree_->Fill();
+
 
   // for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
   // p != myGenEvent->particles_end(); ++p ) 
@@ -298,7 +301,7 @@ MCanalyzer::beginJob()
   tree_->Branch("gen_gamma1_p4",  "TLorentzVector",  &gen_muon1_p4);
   tree_->Branch("gen_gamma2_p4",  "TLorentzVector",  &gen_muon1_p4);
   tree_->Branch("daughter_id",   "vector", &daughter_id);
-  tree_->Branch("number_daughters",   "vector", &number_daughters);
+  tree_->Branch("number_daughters",  &number_daughters);
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
