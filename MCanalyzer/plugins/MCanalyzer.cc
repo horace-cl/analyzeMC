@@ -239,7 +239,6 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     // NOW CREATE THE BOOST TO DILEPTON CM FRAME
-    TLorentzVector sum = gen_muon1_p4+gen_muon2_p4;
     math::XYZTLorentzVector muon1(gen_muon1_p4.Px(), gen_muon1_p4.Py(), gen_muon1_p4.Pz(), gen_muon1_p4.E());
     math::XYZTLorentzVector muon2(gen_muon2_p4.Px(), gen_muon2_p4.Py(), gen_muon2_p4.Pz(), gen_muon2_p4.E());
     math::XYZTLorentzVector kaon(gen_kaon_p4.Px(), gen_kaon_p4.Py(), gen_kaon_p4.Pz(), gen_kaon_p4.E());
@@ -267,7 +266,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   tree_->Fill();
 
-
+  daughter_id.clear();
   // for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
   // p != myGenEvent->particles_end(); ++p ) 
   //   {
