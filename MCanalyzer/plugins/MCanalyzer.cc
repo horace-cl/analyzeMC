@@ -218,7 +218,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       // THETA L IS THE AGNLE BEWTEEN THESE TWO (KAON - MUON1)
 	    else if (abs((*aDaughter)->pdg_id())==13){
         //CHECK IS THE CURRENT MUON HAS THE SAME SIGN AS THE B MESON
-        if ((*p)->pdg_id()*(*aDaughter)->pdg_id() == 1){
+        if ((*p)->pdg_id()*(*aDaughter)->pdg_id() > 0){
           gen_muon2_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
         }
         else {
