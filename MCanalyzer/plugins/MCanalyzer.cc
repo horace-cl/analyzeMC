@@ -90,7 +90,7 @@ class MCanalyzer : public edm::EDAnalyzer {
       // ----------member data ---------------------------
       edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
       edm::EDGetTokenT<edm::HepMCProduct> hepmcproduct_;
-      //edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
+      edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
       
       TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
       TVector3       gen_b_vtx;
@@ -117,7 +117,7 @@ MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
  :number_daughters(0), costhetaL(0.0), costhetaKL(0.0)
 {
   std::cout << "INITIALIZER?" << std::endl;
-  //genCands_ = consumes<reco::GenParticleCollection>(edm::InputTag("GenParticles"));
+  genCands_ = consumes<reco::GenParticleCollection>(edm::InputTag("GenParticles"));
   hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generatorSmeared"));
   
 }
@@ -153,9 +153,9 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
-  
-  //edm::Handle<reco::GenParticleCollection> pruned;
-  //iEvent.getByToken(genCands_, pruned);
+ 
+  edm::Handle<reco::GenParticleCollection> pruned;
+  iEvent.getByToken(genCands_, pruned);
 
   edm::Handle<edm:: HepMCProduct > genEvtHandle;
   iEvent.getByToken(hepmcproduct_, genEvtHandle);
