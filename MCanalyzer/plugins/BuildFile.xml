@@ -5,5 +5,7 @@
 <use name="FWCore/ParameterSet"/>
 <use name="DataFormats/TrackReco"/>
 <use name="DataFormats/Math"/>
+<use name="DataFormats/HepMCCandidate"/>
+<use name="DataFormats/PatCandidates"/>
 <use name="SimDataFormats/GeneratorProducts"/>
 <flags EDM_PLUGIN="1"/>

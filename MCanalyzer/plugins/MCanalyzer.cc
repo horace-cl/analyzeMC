@@ -65,7 +65,10 @@ HCL
 // the template argument to the base class so the class inherits
 // from  edm::one::EDAnalyzer<>
 // This will improve performance in multithreaded jobs.
-
+//
+// FROM JHOVANNYS CODE
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/PatCandidates/interface/GenericParticle.h"
 
 using reco::TrackCollection;
 
@@ -87,7 +90,8 @@ class MCanalyzer : public edm::EDAnalyzer {
       // ----------member data ---------------------------
       edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
       edm::EDGetTokenT<edm::HepMCProduct> hepmcproduct_;
-
+      //edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
+      
       TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
       TVector3       gen_b_vtx;
       TTree*         tree_;
@@ -99,7 +103,7 @@ class MCanalyzer : public edm::EDAnalyzer {
 
 
 //
-// constants, enums and typedefs
+//genCands_(consumes<reco::GenParticleCollection>(iConfig.getParameter < edm::InputTag > ("GenParticles"))), constants, enums and typedefs
 //
 
 //
@@ -112,8 +116,8 @@ class MCanalyzer : public edm::EDAnalyzer {
 MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
  :number_daughters(0), costhetaL(0.0), costhetaKL(0.0)
 {
-
   std::cout << "INITIALIZER?" << std::endl;
+  //genCands_ = consumes<reco::GenParticleCollection>(edm::InputTag("GenParticles"));
   hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generatorSmeared"));
   
 }
@@ -147,7 +151,12 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   gen_gamma1_p4.SetPxPyPzE(0.,0.,0.,0.);
   gen_gamma2_p4.SetPxPyPzE(0.,0.,0.,0.);
 
+
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
+  
+  //edm::Handle<reco::GenParticleCollection> pruned;
+  //iEvent.getByToken(genCands_, pruned);
+
   edm::Handle<edm:: HepMCProduct > genEvtHandle;
   iEvent.getByToken(hepmcproduct_, genEvtHandle);
 
@@ -229,11 +238,11 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       else if ((*aDaughter)->pdg_id()==22){
         if (photons==0){
           gen_gamma1_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
+	photons=1;
         }
         else{
           gen_gamma2_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
         }
-        photons++;
       //std::cout << "\t\tGrandDaughters : " << (*aDaughter)->numberOfDaughters() << std::endl;
       }
     }
