@@ -200,8 +200,11 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (debug) std::cout << "VALID SIZE = " << pruned->size() << std::endl;
     int foundit = 0;
     int bplus_ = 0;
+    
     for (size_t i=0; i<pruned->size(); i++) {
       //GETTING DAUGHTERS!
+      int kaon_D = 0;
+      int muon_D = 0;
       const reco::Candidate *dau = &(*pruned)[i];
       //ONLY LOOKING FOR B+-
       if ( (abs(dau->pdgId()) == 521) && (dau->status() == 2) ) {
@@ -212,19 +215,20 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             //int npion=0;
             std::cout << "NUMBER OF GARND?DAUGHTERS : "<< dau->numberOfDaughters() << std::endl;
             number_daughtersJ= dau->numberOfDaughters();
-            //if (dau->numberOfDaughters()>5) continue;
+            if (dau->numberOfDaughters()!=3) continue;
 
             for (size_t k=0; k<dau->numberOfDaughters(); k++) {
               //GETTING GRANDAUGHTERS
               const reco::Candidate *gdau = dau->daughter(k);
               //LOOK FOR GRANDAUGHTERS TO BE K+-  321
               if ( (abs(gdau->pdgId())==321)  && (gdau->status() == 1) ) { //&& gdau->status()==2) { HERE JHOVANNY WAS LOOKING FOR THE JPSI(443)
-                //foundit++;
+                kaon_D++;
                 gen_kaon_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
                 //int nm=0;
               }
               //LOOK FOR GRANDAUGHTERS TO BE MU+- 13
               else if( (abs(gdau->pdgId())==13) && (gdau->status() == 1) ){
+                muon_D++;
                 if (dau->pdgId()*gdau->pdgId()<0){
                   gen_muon1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
                 }
@@ -233,51 +237,54 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 }
               }
               //LOOK FOR ANY DAMN PHOTON
-              else if((dau->pdgId()==22) && false){
-                if (debug) std::cout << "foundit : "<< foundit<< std::endl;
-                if (foundit==0){
-                  gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
-                }
-                else{
-                  gen_gamma2_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
-                }
-                foundit++;
-              }
+              //VAMOS A COMNETARLO POR EL MOMENTO
+              // else if((dau->pdgId()==22) && false){
+              //   if (debug) std::cout << "foundit : "<< foundit<< std::endl;
+              //   if (foundit==0){
+              //     gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+              //   }
+              //   else{
+              //     gen_gamma2_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+              //   }
+              //   foundit++;
+              // }
             }
 
-            math::XYZTLorentzVector muon1J(gen_muon1_p4J.Px(), gen_muon1_p4J.Py(), gen_muon1_p4J.Pz(), gen_muon1_p4J.E());
-            math::XYZTLorentzVector muon2J(gen_muon2_p4J.Px(), gen_muon2_p4J.Py(), gen_muon2_p4J.Pz(), gen_muon2_p4J.E());
-            math::XYZTLorentzVector kaonJ(gen_kaon_p4J.Px(), gen_kaon_p4J.Py(), gen_kaon_p4J.Pz(), gen_kaon_p4J.E());
-            math::XYZTLorentzVector bmesonJ(gen_b_p4J.Px(), gen_b_p4J.Py(), gen_b_p4J.Pz(), gen_b_p4J.E());
-            math::XYZTLorentzVector gamma1J(gen_gamma1_p4J.Px(), gen_gamma1_p4J.Py(), gen_gamma1_p4J.Pz(), gen_gamma1_p4J.E());
-            math::XYZTLorentzVector gamma2J(gen_gamma2_p4J.Px(), gen_gamma2_p4J.Py(), gen_gamma2_p4J.Pz(), gen_gamma2_p4J.E());
+            if ((kaon_D==1) && (muon_D==2)){
+              math::XYZTLorentzVector muon1J(gen_muon1_p4J.Px(), gen_muon1_p4J.Py(), gen_muon1_p4J.Pz(), gen_muon1_p4J.E());
+              math::XYZTLorentzVector muon2J(gen_muon2_p4J.Px(), gen_muon2_p4J.Py(), gen_muon2_p4J.Pz(), gen_muon2_p4J.E());
+              math::XYZTLorentzVector kaonJ(gen_kaon_p4J.Px(), gen_kaon_p4J.Py(), gen_kaon_p4J.Pz(), gen_kaon_p4J.E());
+              math::XYZTLorentzVector bmesonJ(gen_b_p4J.Px(), gen_b_p4J.Py(), gen_b_p4J.Pz(), gen_b_p4J.E());
+              math::XYZTLorentzVector gamma1J(gen_gamma1_p4J.Px(), gen_gamma1_p4J.Py(), gen_gamma1_p4J.Pz(), gen_gamma1_p4J.E());
+              math::XYZTLorentzVector gamma2J(gen_gamma2_p4J.Px(), gen_gamma2_p4J.Py(), gen_gamma2_p4J.Pz(), gen_gamma2_p4J.E());
 
 
-            math::XYZTLorentzVector dilepJ = muon1J+muon2J;
-            ROOT::Math::Boost dileptonCMBoost(dilepJ.BoostToCM());
+              math::XYZTLorentzVector dilepJ = muon1J+muon2J;
+              ROOT::Math::Boost dileptonCMBoost(dilepJ.BoostToCM());
 
-            math::XYZTLorentzVector kaonCMJ(  dileptonCMBoost( kaonJ )  );
-            math::XYZTLorentzVector muonCM1J(  dileptonCMBoost( muon1J )  );
-            math::XYZTLorentzVector muonCM2J(  dileptonCMBoost( muon2J )  );
-            math::XYZTLorentzVector bmesonCMJ(  dileptonCMBoost( bmesonJ )  );
-            math::XYZTLorentzVector gamma1CMJ(  dileptonCMBoost( gamma1J )  );
-            math::XYZTLorentzVector gamma2CMJ(  dileptonCMBoost( gamma2J )  );
+              math::XYZTLorentzVector kaonCMJ(  dileptonCMBoost( kaonJ )  );
+              math::XYZTLorentzVector muonCM1J(  dileptonCMBoost( muon1J )  );
+              math::XYZTLorentzVector muonCM2J(  dileptonCMBoost( muon2J )  );
+              math::XYZTLorentzVector bmesonCMJ(  dileptonCMBoost( bmesonJ )  );
+              math::XYZTLorentzVector gamma1CMJ(  dileptonCMBoost( gamma1J )  );
+              math::XYZTLorentzVector gamma2CMJ(  dileptonCMBoost( gamma2J )  );
 
-            gen_b_p4CMJ.SetPxPyPzE(bmesonCMJ.x(), bmesonCMJ.y(), bmesonCMJ.z(), bmesonCMJ.t() ) ;
-            gen_kaon_p4CMJ.SetPxPyPzE(kaonCMJ.x(), kaonCMJ.y(), kaonCMJ.z(), kaonCMJ.t() ) ;
-            gen_muon1_p4CMJ.SetPxPyPzE(muonCM1J.x(), muonCM1J.y(), muonCM1J.z(), muonCM1J.t() ) ;
-            gen_muon2_p4CMJ.SetPxPyPzE(muonCM2J.x(), muonCM2J.y(), muonCM2J.z(), muonCM2J.t() ) ;
-            gen_gamma1_p4CMJ.SetPxPyPzE(gamma1CMJ.x(), gamma1CMJ.y(), gamma1CMJ.z(), gamma1CMJ.t() ) ;
-            gen_gamma2_p4CMJ.SetPxPyPzE(gamma2CMJ.x(), gamma2CMJ.y(), gamma2CMJ.z(), gamma2CMJ.t() ) ;
+              gen_b_p4CMJ.SetPxPyPzE(bmesonCMJ.x(), bmesonCMJ.y(), bmesonCMJ.z(), bmesonCMJ.t() ) ;
+              gen_kaon_p4CMJ.SetPxPyPzE(kaonCMJ.x(), kaonCMJ.y(), kaonCMJ.z(), kaonCMJ.t() ) ;
+              gen_muon1_p4CMJ.SetPxPyPzE(muonCM1J.x(), muonCM1J.y(), muonCM1J.z(), muonCM1J.t() ) ;
+              gen_muon2_p4CMJ.SetPxPyPzE(muonCM2J.x(), muonCM2J.y(), muonCM2J.z(), muonCM2J.t() ) ;
+              gen_gamma1_p4CMJ.SetPxPyPzE(gamma1CMJ.x(), gamma1CMJ.y(), gamma1CMJ.z(), gamma1CMJ.t() ) ;
+              gen_gamma2_p4CMJ.SetPxPyPzE(gamma2CMJ.x(), gamma2CMJ.y(), gamma2CMJ.z(), gamma2CMJ.t() ) ;
 
 
-            costhetaLJ = ( muonCM1J.x()*muonCM2J.x() 
-                               + muonCM1J.y()*muonCM2J.y() 
-                               + muonCM1J.z()*muonCM2J.z() ) / (muonCM1J.P()*muonCM2J.P() );
+              costhetaLJ = ( muonCM1J.x()*muonCM2J.x() 
+                                 + muonCM1J.y()*muonCM2J.y() 
+                                 + muonCM1J.z()*muonCM2J.z() ) / (muonCM1J.P()*muonCM2J.P() );
 
-            costhetaKLJ = ( muonCM1J.x()*kaonCMJ.x()
-                               + muonCM1J.y()*kaonCMJ.y()
-                               + muonCM1J.z()*kaonCMJ.z() ) / (muonCM1J.P()*kaonCMJ.P() );
+              costhetaKLJ = ( muonCM1J.x()*kaonCMJ.x()
+                                 + muonCM1J.y()*kaonCMJ.y()
+                                 + muonCM1J.z()*kaonCMJ.z() ) / (muonCM1J.P()*kaonCMJ.P() );
+          }
       }
     }
    
