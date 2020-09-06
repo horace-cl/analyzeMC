@@ -95,6 +95,7 @@ class MCanalyzer : public edm::EDAnalyzer {
       
       TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
       TLorentzVector gen_b_p4J,gen_phi_p4J,gen_kaon_p4J,gen_muon1_p4J,gen_muon2_p4J, gen_gamma1_p4J, gen_gamma2_p4J;
+      math::XYZTLorentzVector gen_b_p4CM,gen_phi_p4CM,gen_kaon_p4CM,gen_muon1_p4CM,gen_muon2_p4CM, gen_gamma1_p4CM, gen_gamma2_p4CM;
       TVector3       gen_b_vtx;
       TTree*         tree_;
       std::vector<std::vector<int>>    daughter_id;
@@ -162,6 +163,13 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   gen_gamma1_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
   gen_gamma2_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
 
+  gen_b_p4CM.SetXYZT(0.,0.,0.,0.);
+  gen_kaon_p4CM.SetXYZT(0.,0.,0.,0.);
+  gen_muon1_p4CM.SetXYZT(0.,0.,0.,0.);
+  gen_muon2_p4CM.SetXYZT(0.,0.,0.,0.);
+  gen_gamma1_p4CM.SetXYZT(0.,0.,0.,0.);
+  gen_gamma2_p4CM.SetXYZT(0.,0.,0.,0.);
+
 
   if (debug) std::cout << "HELLO FROM ANALYZER! " << std::endl;
  
@@ -189,7 +197,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //ONLY LOOKING FOR B+-
       if ( (abs(dau->pdgId()) == 521) ) { //&& (dau->status() == 2) ) {
             //foundit++;
-            gen_b_p4.SetPtEtaPhiM(dau->pt(),dau->eta(),dau->phi(),dau->mass());
+            gen_b_p4J.SetPtEtaPhiM(dau->pt(),dau->eta(),dau->phi(),dau->mass());
             gen_b_vtx.SetXYZ(dau->vx(),dau->vy(),dau->vz());
             //int npion=0;
             std::cout << "NUMBER OF GARND?DAUGHTERS : "<< dau->numberOfDaughters() << std::endl;
@@ -314,13 +322,23 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     math::XYZTLorentzVector muon1(gen_muon1_p4.Px(), gen_muon1_p4.Py(), gen_muon1_p4.Pz(), gen_muon1_p4.E());
     math::XYZTLorentzVector muon2(gen_muon2_p4.Px(), gen_muon2_p4.Py(), gen_muon2_p4.Pz(), gen_muon2_p4.E());
     math::XYZTLorentzVector kaon(gen_kaon_p4.Px(), gen_kaon_p4.Py(), gen_kaon_p4.Pz(), gen_kaon_p4.E());
+    math::XYZTLorentzVector bmeson(gen_b_p4.Px(), gen_b_p4.Py(), gen_b_p4.Pz(), gen_b_p4.E());
+    math::XYZTLorentzVector gamma1(gen_gamma1_p4.Px(), gen_gamma1_p4.Py(), gen_gamma1_p4.Pz(), gen_gamma1_p4.E());
+    math::XYZTLorentzVector gamma2(gen_gamma2_p4.Px(), gen_gamma2_p4.Py(), gen_gamma2_p4.Pz(), gen_gamma2_p4.E());
    
     math::XYZTLorentzVector dilep = muon1+muon2;
-    ROOT::Math::Boost cmboost(dilep.BoostToCM());
+    ROOT::Math::Boost dileptonCMBoost(dilep.BoostToCM());
 
-    math::XYZTLorentzVector kaonCM(  cmboost( kaon )  );
-    math::XYZTLorentzVector muonCM1(  cmboost( muon1 )  );
-    math::XYZTLorentzVector muonCM2(  cmboost( muon2 )  );
+    gen_b_p4CM = dileptonCMBoost(bmeson) ;
+    gen_kaon_p4CM = dileptonCMBoost(kaon) ;
+    gen_muon1_p4CM = dileptonCMBoost(muon1) ;
+    gen_muon2_p4CM = dileptonCMBoost(muon2) ;
+    gen_gamma1_p4CM = dileptonCMBoost(gamma1) ;
+    gen_gamma2_p4CM = dileptonCMBoost(gamma2) ;
+
+    math::XYZTLorentzVector kaonCM(  dileptonCMBoost( kaon )  );
+    math::XYZTLorentzVector muonCM1(  dileptonCMBoost( muon1 )  );
+    math::XYZTLorentzVector muonCM2(  dileptonCMBoost( muon2 )  );
 
 
     costhetaL = ( muonCM1.x()*muonCM2.x() 
@@ -401,12 +419,19 @@ MCanalyzer::beginJob()
   tree_->Branch("gen_gamma1_p4",  "TLorentzVector",  &gen_muon1_p4);
   tree_->Branch("gen_gamma2_p4",  "TLorentzVector",  &gen_muon1_p4);
 
-  tree_->Branch("gen_b_p4J",     "TLorentzVector",  &gen_b_p4);
-  tree_->Branch("gen_kaon_p4J",  "TLorentzVector",  &gen_kaon_p4);
-  tree_->Branch("gen_muon1_p4J",  "TLorentzVector",  &gen_muon1_p4);
-  tree_->Branch("gen_muon2_p4J",  "TLorentzVector",  &gen_muon2_p4);
-  tree_->Branch("gen_gamma1_p4J",  "TLorentzVector",  &gen_muon1_p4);
-  tree_->Branch("gen_gamma2_p4J",  "TLorentzVector",  &gen_muon1_p4);
+  tree_->Branch("gen_b_p4J",     "TLorentzVector",  &gen_b_p4J);
+  tree_->Branch("gen_kaon_p4J",  "TLorentzVector",  &gen_kaon_p4J);
+  tree_->Branch("gen_muon1_p4J",  "TLorentzVector",  &gen_muon1_p4J);
+  tree_->Branch("gen_muon2_p4J",  "TLorentzVector",  &gen_muon2_p4J);
+  tree_->Branch("gen_gamma1_p4J",  "TLorentzVector",  &gen_muon1_p4J);
+  tree_->Branch("gen_gamma2_p4J",  "TLorentzVector",  &gen_muon1_p4J);
+
+  tree_->Branch("gen_b_p4CM",     "TLorentzVector",  &gen_b_p4CM);
+  tree_->Branch("gen_kaon_p4CM",  "TLorentzVector",  &gen_kaon_p4CM);
+  tree_->Branch("gen_muon1_p4CM",  "TLorentzVector",  &gen_muon1_p4CM);
+  tree_->Branch("gen_muon2_p4CM",  "TLorentzVector",  &gen_muon2_p4CM);
+  tree_->Branch("gen_gamma1_p4CM",  "TLorentzVector",  &gen_muon1_p4CM);
+  tree_->Branch("gen_gamma2_p4CM",  "TLorentzVector",  &gen_muon1_p4CM);
   
   tree_->Branch("daughter_id",   "vector", &daughter_id);
   tree_->Branch("number_daughters",  &number_daughters);
