@@ -96,12 +96,13 @@ class MCanalyzer : public edm::EDAnalyzer {
       TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
       TLorentzVector gen_b_p4J,gen_phi_p4J,gen_kaon_p4J,gen_muon1_p4J,gen_muon2_p4J, gen_gamma1_p4J, gen_gamma2_p4J;
       TLorentzVector gen_b_p4CM,gen_phi_p4CM,gen_kaon_p4CM,gen_muon1_p4CM,gen_muon2_p4CM, gen_gamma1_p4CM, gen_gamma2_p4CM;
+      TLorentzVector gen_b_p4CMJ,gen_phi_p4CMJ,gen_kaon_p4CMJ,gen_muon1_p4CMJ,gen_muon2_p4CMJ, gen_gamma1_p4CMJ, gen_gamma2_p4CMJ;
       TVector3       gen_b_vtx;
       TTree*         tree_;
       std::vector<std::vector<int>>    daughter_id;
      // std::vector<int> number_daughters;
-      int number_daughters;
-      float costhetaL, costhetaKL;
+      int number_daughters, number_daughtersJ;
+      float costhetaL, costhetaKL, costhetaLJ, costhetaKLJ;
 };
 
 
@@ -117,7 +118,7 @@ class MCanalyzer : public edm::EDAnalyzer {
 // constructors and destructor
 //
 MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
- :number_daughters(0), costhetaL(0.0), costhetaKL(0.0)
+ :number_daughters(0), costhetaL(0.0), costhetaKL(0.0), number_daughtersJ(0), costhetaLJ(0.0), costhetaKLJ(0.0)
 {
   std::cout << "INITIALIZER?" << std::endl;
   genCands_ = consumes<std::vector<reco::GenParticle>>(edm::InputTag("genParticles"));
@@ -145,7 +146,7 @@ void
 MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
-  bool JHOVANNYS=true;
+  bool JHOVANNYS=false;
   bool debug = false;
 
   gen_b_p4.SetPxPyPzE(0.,0.,0.,0.);
@@ -169,6 +170,13 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   gen_muon2_p4CM.SetPxPyPzE(0.,0.,0.,0.);
   gen_gamma1_p4CM.SetPxPyPzE(0.,0.,0.,0.);
   gen_gamma2_p4CM.SetPxPyPzE(0.,0.,0.,0.);
+
+  gen_b_p4CMJ.SetPxPyPzE(0.,0.,0.,0.);
+  gen_kaon_p4CMJ.SetPxPyPzE(0.,0.,0.,0.);
+  gen_muon1_p4CMJ.SetPxPyPzE(0.,0.,0.,0.);
+  gen_muon2_p4CMJ.SetPxPyPzE(0.,0.,0.,0.);
+  gen_gamma1_p4CMJ.SetPxPyPzE(0.,0.,0.,0.);
+  gen_gamma2_p4CMJ.SetPxPyPzE(0.,0.,0.,0.);
 
 
   if (debug) std::cout << "HELLO FROM ANALYZER! " << std::endl;
@@ -201,13 +209,14 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             gen_b_vtx.SetXYZ(dau->vx(),dau->vy(),dau->vz());
             //int npion=0;
             std::cout << "NUMBER OF GARND?DAUGHTERS : "<< dau->numberOfDaughters() << std::endl;
+            number_daughtersJ= dau->numberOfDaughters();
             //if (dau->numberOfDaughters()>5) continue;
 
             for (size_t k=0; k<dau->numberOfDaughters(); k++) {
               //GETTING GRANDAUGHTERS
               const reco::Candidate *gdau = dau->daughter(k);
-              //LOOK FOR GRANDAUGHTERS TO BE K+-  443
-              if ( abs(gdau->pdgId())==443 ) { //&& gdau->status()==2) { HERE JHOVANNY WAS LOOKING FOR THE JPSI(443)
+              //LOOK FOR GRANDAUGHTERS TO BE K+-  321
+              if ( abs(gdau->pdgId())==321 ) { //&& gdau->status()==2) { HERE JHOVANNY WAS LOOKING FOR THE JPSI(443)
                 //foundit++;
                 gen_kaon_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
                 //int nm=0;
@@ -230,10 +239,43 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 else{
                   gen_gamma2_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
                 }
-
                 foundit++;
               }
             }
+
+            math::XYZTLorentzVector muon1J(gen_muon1_p4J.Px(), gen_muon1_p4J.Py(), gen_muon1_p4J.Pz(), gen_muon1_p4J.E());
+            math::XYZTLorentzVector muon2J(gen_muon2_p4J.Px(), gen_muon2_p4J.Py(), gen_muon2_p4J.Pz(), gen_muon2_p4J.E());
+            math::XYZTLorentzVector kaonJ(gen_kaon_p4J.Px(), gen_kaon_p4J.Py(), gen_kaon_p4J.Pz(), gen_kaon_p4J.E());
+            math::XYZTLorentzVector bmesonJ(gen_b_p4J.Px(), gen_b_p4J.Py(), gen_b_p4J.Pz(), gen_b_p4J.E());
+            math::XYZTLorentzVector gamma1J(gen_gamma1_p4J.Px(), gen_gamma1_p4J.Py(), gen_gamma1_p4J.Pz(), gen_gamma1_p4J.E());
+            math::XYZTLorentzVector gamma2J(gen_gamma2_p4J.Px(), gen_gamma2_p4J.Py(), gen_gamma2_p4J.Pz(), gen_gamma2_p4J.E());
+
+
+            math::XYZTLorentzVector dilepJ = muon1J+muon2J;
+            ROOT::Math::Boost dileptonCMBoost(dilepJ.BoostToCM());
+
+            math::XYZTLorentzVector kaonCMJ(  dileptonCMBoost( kaonJ )  );
+            math::XYZTLorentzVector muonCM1J(  dileptonCMBoost( muon1J )  );
+            math::XYZTLorentzVector muonCM2J(  dileptonCMBoost( muon2J )  );
+            math::XYZTLorentzVector bmesonCMJ(  dileptonCMBoost( bmesonJ )  );
+            math::XYZTLorentzVector gamma1CMJ(  dileptonCMBoost( gamma1J )  );
+            math::XYZTLorentzVector gamma2CMJ(  dileptonCMBoost( gamma2J )  );
+
+            gen_b_p4CMJ.SetPxPyPzE(bmesonCMJ.x(), bmesonCMJ.y(), bmesonCMJ.z(), bmesonCMJ.t() ) ;
+            gen_kaon_p4CMJ.SetPxPyPzE(kaonCMJ.x(), kaonCMJ.y(), kaonCMJ.z(), kaonCMJ.t() ) ;
+            gen_muon1_p4CMJ.SetPxPyPzE(muonCM1J.x(), muonCM1J.y(), muonCM1J.z(), muonCM1J.t() ) ;
+            gen_muon2_p4CMJ.SetPxPyPzE(muonCM2J.x(), muonCM2J.y(), muonCM2J.z(), muonCM2J.t() ) ;
+            gen_gamma1_p4CMJ.SetPxPyPzE(gamma1CMJ.x(), gamma1CMJ.y(), gamma1CMJ.z(), gamma1CMJ.t() ) ;
+            gen_gamma2_p4CMJ.SetPxPyPzE(gamma2CMJ.x(), gamma2CMJ.y(), gamma2CMJ.z(), gamma2CMJ.t() ) ;
+
+
+            costhetaLJ = ( muonCM1J.x()*muonCM2J.x() 
+                               + muonCM1J.y()*muonCM2J.y() 
+                               + muonCM1J.z()*muonCM2J.z() ) / (muonCM1J.P()*muonCM2J.P() );
+
+            costhetaKLJ = ( muonCM1J.x()*kaonCMJ.x()
+                               + muonCM1J.y()*kaonCMJ.y()
+                               + muonCM1J.z()*kaonCMJ.z() ) / (muonCM1J.P()*kaonCMJ.P() );
       }
     }
   }
@@ -319,22 +361,13 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     // NOW CREATE THE BOOST TO DILEPTON CM FRAME
-    std::cout << "PX : " << gen_muon1_p4J.Px() << "PY : " << gen_muon1_p4J.Py() << "PZ : " << gen_muon1_p4J.Pz() << std::endl;
-    math::XYZTLorentzVector muon1(gen_muon1_p4J.Px(), gen_muon1_p4J.Py(), gen_muon1_p4J.Pz(), gen_muon1_p4J.E());
-    math::XYZTLorentzVector muon2(gen_muon2_p4J.Px(), gen_muon2_p4J.Py(), gen_muon2_p4J.Pz(), gen_muon2_p4J.E());
-    math::XYZTLorentzVector kaon(gen_kaon_p4J.Px(), gen_kaon_p4J.Py(), gen_kaon_p4J.Pz(), gen_kaon_p4J.E());
-    math::XYZTLorentzVector bmeson(gen_b_p4J.Px(), gen_b_p4J.Py(), gen_b_p4J.Pz(), gen_b_p4J.E());
-    math::XYZTLorentzVector gamma1(gen_gamma1_p4J.Px(), gen_gamma1_p4J.Py(), gen_gamma1_p4J.Pz(), gen_gamma1_p4J.E());
-    math::XYZTLorentzVector gamma2(gen_gamma2_p4J.Px(), gen_gamma2_p4J.Py(), gen_gamma2_p4J.Pz(), gen_gamma2_p4J.E());
+    math::XYZTLorentzVector muon1(gen_muon1_p4.Px(), gen_muon1_p4.Py(), gen_muon1_p4.Pz(), gen_muon1_p4.E());
+    math::XYZTLorentzVector muon2(gen_muon2_p4.Px(), gen_muon2_p4.Py(), gen_muon2_p4.Pz(), gen_muon2_p4.E());
+    math::XYZTLorentzVector kaon(gen_kaon_p4.Px(), gen_kaon_p4.Py(), gen_kaon_p4.Pz(), gen_kaon_p4.E());
+    math::XYZTLorentzVector bmeson(gen_b_p4.Px(), gen_b_p4.Py(), gen_b_p4.Pz(), gen_b_p4.E());
+    math::XYZTLorentzVector gamma1(gen_gamma1_p4.Px(), gen_gamma1_p4.Py(), gen_gamma1_p4.Pz(), gen_gamma1_p4.E());
+    math::XYZTLorentzVector gamma2(gen_gamma2_p4.Px(), gen_gamma2_p4.Py(), gen_gamma2_p4.Pz(), gen_gamma2_p4.E()); 
     
-    // else {
-    // math::XYZTLorentzVector muon1(gen_muon1_p4.Px(), gen_muon1_p4.Py(), gen_muon1_p4.Pz(), gen_muon1_p4.E());
-    // math::XYZTLorentzVector muon2(gen_muon2_p4.Px(), gen_muon2_p4.Py(), gen_muon2_p4.Pz(), gen_muon2_p4.E());
-    // math::XYZTLorentzVector kaon(gen_kaon_p4.Px(), gen_kaon_p4.Py(), gen_kaon_p4.Pz(), gen_kaon_p4.E());
-    // math::XYZTLorentzVector bmeson(gen_b_p4.Px(), gen_b_p4.Py(), gen_b_p4.Pz(), gen_b_p4.E());
-    // math::XYZTLorentzVector gamma1(gen_gamma1_p4.Px(), gen_gamma1_p4.Py(), gen_gamma1_p4.Pz(), gen_gamma1_p4.E());
-    // math::XYZTLorentzVector gamma2(gen_gamma2_p4.Px(), gen_gamma2_p4.Py(), gen_gamma2_p4.Pz(), gen_gamma2_p4.E()); 
-    // }
 
     math::XYZTLorentzVector dilep = muon1+muon2;
     ROOT::Math::Boost dileptonCMBoost(dilep.BoostToCM());
@@ -366,53 +399,15 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                        + muonCM1.z()*kaonCM.z() ) / (muonCM1.P()*kaonCM.P() );
 
   
-  if (debug) std::cout << "Number of Daugthers : "<< ids.size() <<std::endl;
-  daughter_id.push_back(ids);
-  number_daughters= ids.size();
+    if (debug) std::cout << "Number of Daugthers : "<< ids.size() <<std::endl;
+    daughter_id.push_back(ids);
+    number_daughters= ids.size();
 
-  tree_->Fill();
+    tree_->Fill();
 
-  daughter_id.clear();
-  // for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin();
-  // p != myGenEvent->particles_end(); ++p ) 
-  //   {
-  //     // phiParticle = (*p)->momentum().phi();
-  //     // etaParticle = (*p)->momentum().eta();
-  //     // double pt  = (*p)->momentum().perp();
-  //     // mom_MC = (*p)->momentum().rho();
-  //     // if(pt > maxPt) { npart++; maxPt = pt; /*phi_MC = phiParticle; eta_MC = etaParticle;*/ }
-  //     // GlobalVector mom ((*p)->momentum().x(),(*p)->momentum().y(),(*p)->momentum().z());
-  //   }
+    daughter_id.clear();
 
-  
-
-
-
-  // VERTEX ITERATOR
-  //FROM TWIKI 
-  //https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideDataFormatGeneratorInterface
-  // int i=0;
-  // int j=0;
-  // if (debug) std::cout << "HANDLE OBTAINED" << std::endl;
-  // for ( HepMC::GenEvent::vertex_const_iterator
-  //           itVtx=Evt->vertices_begin(); itVtx!=Evt->vertices_end(); ++itVtx )
-  //   {
-  //         i++;
-  //         j=0;
-  //         //
-  //         // this is an example loop over particles coming out of each vertex in the loop
-  //         //
-
-  //         std::cout << "VERTEX ITERATOR " << i << std::endl;
-  //         for ( HepMC::GenVertex::particles_out_const_iterator
-  //                 itPartOut=(*itVtx)->particles_out_const_begin();
-  //                 itPartOut!=(*itVtx)->particles_out_const_end(); ++itPartOut )
-  //           {
-  //             j+=1;
-  //             std::cout << "PARTICLES " << j << std::endl;
-  //              // and more of your code...
-  //           }
-    }
+  }
 
 
 }
@@ -448,11 +443,22 @@ MCanalyzer::beginJob()
   tree_->Branch("gen_muon2_p4CM",  "TLorentzVector",  &gen_muon2_p4CM);
   tree_->Branch("gen_gamma1_p4CM",  "TLorentzVector",  &gen_muon1_p4CM);
   tree_->Branch("gen_gamma2_p4CM",  "TLorentzVector",  &gen_muon1_p4CM);
+
+  tree_->Branch("gen_b_p4CMJ",     "TLorentzVector",  &gen_b_p4CMJ);
+  tree_->Branch("gen_kaon_p4CMJ",  "TLorentzVector",  &gen_kaon_p4CMJ);
+  tree_->Branch("gen_muon1_p4CMJ",  "TLorentzVector",  &gen_muon1_p4CMJ);
+  tree_->Branch("gen_muon2_p4CMJ",  "TLorentzVector",  &gen_muon2_p4CMJ);
+  tree_->Branch("gen_gamma1_p4CMJ",  "TLorentzVector",  &gen_muon1_p4CMJ);
+  tree_->Branch("gen_gamma2_p4CMJ",  "TLorentzVector",  &gen_muon1_p4CMJ);
   
   tree_->Branch("daughter_id",   "vector", &daughter_id);
   tree_->Branch("number_daughters",  &number_daughters);
   tree_->Branch("costhetaL",  &costhetaL);
   tree_->Branch("costhetaKL",  &costhetaKL);
+
+  tree_->Branch("number_daughtersJ",  &number_daughtersJ);
+  tree_->Branch("costhetaLJ",  &costhetaLJ);
+  tree_->Branch("costhetaKLJ",  &costhetaKLJ);
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
