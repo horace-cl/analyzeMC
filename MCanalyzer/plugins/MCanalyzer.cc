@@ -319,6 +319,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     // NOW CREATE THE BOOST TO DILEPTON CM FRAME
+    std::cout << "PX : " << gen_muon1_p4J.Px() << "PY : " << gen_muon1_p4J.Py() << "PZ : " << gen_muon1_p4J.Pz() << std::endl;
     math::XYZTLorentzVector muon1(gen_muon1_p4J.Px(), gen_muon1_p4J.Py(), gen_muon1_p4J.Pz(), gen_muon1_p4J.E());
     math::XYZTLorentzVector muon2(gen_muon2_p4J.Px(), gen_muon2_p4J.Py(), gen_muon2_p4J.Pz(), gen_muon2_p4J.E());
     math::XYZTLorentzVector kaon(gen_kaon_p4J.Px(), gen_kaon_p4J.Py(), gen_kaon_p4J.Pz(), gen_kaon_p4J.E());
