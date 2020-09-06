@@ -462,7 +462,7 @@ MCanalyzer::beginJob()
   tree_->Branch("costhetaLJ",  &costhetaLJ);
   tree_->Branch("costhetaKLJ",  &costhetaKLJ);
 
-  tree->Branch('Nbplus', &bplus);
+  tree_->Branch("Nbplus", &bplus);
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
