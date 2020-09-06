@@ -93,6 +93,7 @@ class MCanalyzer : public edm::EDAnalyzer {
       edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
       
       TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
+      TLorentzVector gen_b_p4J,gen_phi_p4J,gen_kaon_p4J,gen_muon1_p4J,gen_muon2_p4J, gen_gamma1_p4J, gen_gamma2_p4J;
       TVector3       gen_b_vtx;
       TTree*         tree_;
       std::vector<std::vector<int>>    daughter_id;
@@ -151,6 +152,13 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   gen_gamma1_p4.SetPxPyPzE(0.,0.,0.,0.);
   gen_gamma2_p4.SetPxPyPzE(0.,0.,0.,0.);
 
+  gen_b_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
+  gen_kaon_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
+  gen_muon1_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
+  gen_muon2_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
+  gen_gamma1_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
+  gen_gamma2_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
+
 
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
  
@@ -160,14 +168,64 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<edm:: HepMCProduct > genEvtHandle;
   iEvent.getByToken(hepmcproduct_, genEvtHandle);
 
-  // double qScale = GenInfoHandle->qScale();
-  // double pthat = ( GenInfoHandle->hasBinningValues() ? 
-  //                 (GenInfoHandle->binningValues())[0] : 0.0);
-  // cout << " qScale = " << qScale << " pthat = " << pthat << endl;
-  //const HepMC::GenEvent* iEvent = genEvtHandle->GetEvent() ;
-  //
-  // this is an example loop over the hierarchy of vertices
-  //
+
+
+  //JHOVANNYS
+  //JHOVANNYS
+  //JHOVANNYS
+  //JHOVANNYS
+  std::cout << "PRUNED? \n";
+  std::cout << "SIZE = " << pruned->size() << std::endl;
+  if ( pruned.isValid() ) {
+    int foundit = 0;
+    for (size_t i=0; i<pruned->size(); i++) {
+      foundit = 0;
+      //GETTING DAUGHTERS!
+      const reco::Candidate *dau = &(*pruned)[i];
+      //ONLY LOOKING FOR B+-
+      if ( (abs(dau->pdgId()) == 521) ) { //&& (dau->status() == 2) ) {
+            //foundit++;
+            gen_b_p4.SetPtEtaPhiM(dau->pt(),dau->eta(),dau->phi(),dau->mass());
+            gen_b_vtx.SetXYZ(dau->vx(),dau->vy(),dau->vz());
+            //int npion=0;
+            std::cout << "NUMBER OF GARND?DAUGHTERS : "<< dau->numberOfDaughters() << std::endl;
+            if (dau->numberOfDaughters()>5) continue;
+
+            for (size_t k=0; k<dau->numberOfDaughters(); k++) {
+              //GETTING GRANDAUGHTERS
+              const reco::Candidate *gdau = dau->daughter(k);
+              //LOOK FOR GRANDAUGHTERS TO BE K+-  443
+              if ( abs(gdau->pdgId())==443 ) { //&& gdau->status()==2) { HERE JHOVANNY WAS LOOKING FOR THE JPSI(443)
+                //foundit++;
+                gen_kaon_p4_J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                //int nm=0;
+              }
+              //LOOK FOR GRANDAUGHTERS TO BE MU+- 13
+              else if( abs(gdau->pdgId())==13){
+                if (dau->pdgId()*gdau->pdgId()<0){
+                  gen_muon1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                }
+                else {
+                  gen_muon2_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                }
+              }
+              //LOOK FOR ANY DAMN PHOTON
+              else if(dau->pdgId()==22){
+                ++foundit;
+                std::count << "foundit : "<< foundit<< std::endl;
+                if (foundit==0){
+                  gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                }
+                else{
+                  gen_gamma2_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                }
+              }
+            }
+      }
+    }
+  }
+ 
+
 
   // from 
   // Calibration/HcalCalibAlgos/plugins/SimAnalyzerMinbias.cc
@@ -337,6 +395,14 @@ MCanalyzer::beginJob()
   tree_->Branch("gen_b_vtx",    "TVector3",        &gen_b_vtx);
   tree_->Branch("gen_gamma1_p4",  "TLorentzVector",  &gen_muon1_p4);
   tree_->Branch("gen_gamma2_p4",  "TLorentzVector",  &gen_muon1_p4);
+
+  tree_->Branch("gen_b_p4J",     "TLorentzVector",  &gen_b_p4);
+  tree_->Branch("gen_kaon_p4J",  "TLorentzVector",  &gen_kaon_p4);
+  tree_->Branch("gen_muon1_p4J",  "TLorentzVector",  &gen_muon1_p4);
+  tree_->Branch("gen_muon2_p4J",  "TLorentzVector",  &gen_muon2_p4);
+  tree_->Branch("gen_gamma1_p4J",  "TLorentzVector",  &gen_muon1_p4);
+  tree_->Branch("gen_gamma2_p4J",  "TLorentzVector",  &gen_muon1_p4);
+  
   tree_->Branch("daughter_id",   "vector", &daughter_id);
   tree_->Branch("number_daughters",  &number_daughters);
   tree_->Branch("costhetaL",  &costhetaL);
