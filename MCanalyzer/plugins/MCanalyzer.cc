@@ -193,7 +193,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             gen_b_vtx.SetXYZ(dau->vx(),dau->vy(),dau->vz());
             //int npion=0;
             std::cout << "NUMBER OF GARND?DAUGHTERS : "<< dau->numberOfDaughters() << std::endl;
-            if (dau->numberOfDaughters()>5) continue;
+            //if (dau->numberOfDaughters()>5) continue;
 
             for (size_t k=0; k<dau->numberOfDaughters(); k++) {
               //GETTING GRANDAUGHTERS
