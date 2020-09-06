@@ -157,12 +157,12 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   gen_gamma1_p4.SetPxPyPzE(0.,0.,0.,0.);
   gen_gamma2_p4.SetPxPyPzE(0.,0.,0.,0.);
 
-  gen_b_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
-  gen_kaon_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
-  gen_muon1_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
-  gen_muon2_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
-  gen_gamma1_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
-  gen_gamma2_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
+  gen_b_p4J.SetPxPyPzE(0.,0.,0.,0.);
+  gen_kaon_p4J.SetPxPyPzE(0.,0.,0.,0.);
+  gen_muon1_p4J.SetPxPyPzE(0.,0.,0.,0.);
+  gen_muon2_p4J.SetPxPyPzE(0.,0.,0.,0.);
+  gen_gamma1_p4J.SetPxPyPzE(0.,0.,0.,0.);
+  gen_gamma2_p4J.SetPxPyPzE(0.,0.,0.,0.);
 
   gen_b_p4CM.SetPxPyPzE(0.,0.,0.,0.);
   gen_kaon_p4CM.SetPxPyPzE(0.,0.,0.,0.);
