@@ -95,7 +95,7 @@ class MCanalyzer : public edm::EDAnalyzer {
       
       TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
       TLorentzVector gen_b_p4J,gen_phi_p4J,gen_kaon_p4J,gen_muon1_p4J,gen_muon2_p4J, gen_gamma1_p4J, gen_gamma2_p4J;
-      math::XYZTLorentzVector gen_b_p4CM,gen_phi_p4CM,gen_kaon_p4CM,gen_muon1_p4CM,gen_muon2_p4CM, gen_gamma1_p4CM, gen_gamma2_p4CM;
+      TLorentzVector gen_b_p4CM,gen_phi_p4CM,gen_kaon_p4CM,gen_muon1_p4CM,gen_muon2_p4CM, gen_gamma1_p4CM, gen_gamma2_p4CM;
       TVector3       gen_b_vtx;
       TTree*         tree_;
       std::vector<std::vector<int>>    daughter_id;
@@ -163,12 +163,12 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   gen_gamma1_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
   gen_gamma2_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
 
-  gen_b_p4CM.SetXYZT(0.,0.,0.,0.);
-  gen_kaon_p4CM.SetXYZT(0.,0.,0.,0.);
-  gen_muon1_p4CM.SetXYZT(0.,0.,0.,0.);
-  gen_muon2_p4CM.SetXYZT(0.,0.,0.,0.);
-  gen_gamma1_p4CM.SetXYZT(0.,0.,0.,0.);
-  gen_gamma2_p4CM.SetXYZT(0.,0.,0.,0.);
+  gen_b_p4CM.SetPxPyPzE(0.,0.,0.,0.);
+  gen_kaon_p4CM.SetPxPyPzE(0.,0.,0.,0.);
+  gen_muon1_p4CM.SetPxPyPzE(0.,0.,0.,0.);
+  gen_muon2_p4CM.SetPxPyPzE(0.,0.,0.,0.);
+  gen_gamma1_p4CM.SetPxPyPzE(0.,0.,0.,0.);
+  gen_gamma2_p4CM.SetPxPyPzE(0.,0.,0.,0.);
 
 
   if (debug) std::cout << "HELLO FROM ANALYZER! " << std::endl;
@@ -329,16 +329,22 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     math::XYZTLorentzVector dilep = muon1+muon2;
     ROOT::Math::Boost dileptonCMBoost(dilep.BoostToCM());
 
-    gen_b_p4CM = dileptonCMBoost(bmeson) ;
-    gen_kaon_p4CM = dileptonCMBoost(kaon) ;
-    gen_muon1_p4CM = dileptonCMBoost(muon1) ;
-    gen_muon2_p4CM = dileptonCMBoost(muon2) ;
-    gen_gamma1_p4CM = dileptonCMBoost(gamma1) ;
-    gen_gamma2_p4CM = dileptonCMBoost(gamma2) ;
+
 
     math::XYZTLorentzVector kaonCM(  dileptonCMBoost( kaon )  );
     math::XYZTLorentzVector muonCM1(  dileptonCMBoost( muon1 )  );
     math::XYZTLorentzVector muonCM2(  dileptonCMBoost( muon2 )  );
+    math::XYZTLorentzVector bmesonCM(  dileptonCMBoost( bmeson )  );
+    math::XYZTLorentzVector gamma1CM(  dileptonCMBoost( gamma1 )  );
+    math::XYZTLorentzVector gamma2CM(  dileptonCMBoost( gamma2 )  );
+
+
+    gen_b_p4CM.SetPxPyPzE(bmesonCM.x(), bmesonCM.y(), bmesonCM.z(), bmesonCM.t() ) ;
+    gen_kaon_p4CM.SetPxPyPzE(kaonCM.x(), kaonCM.y(), kaonCM.z(), kaonCM.t() ) ;
+    gen_muon1_p4CM.SetPxPyPzE(muonCM1.x(), muonCM1.y(), muonCM1.z(), muonCM1.t() ) ;
+    gen_muon2_p4CM.SetPxPyPzE(muonCM2.x(), muonCM2.y(), muonCM2.z(), muonCM2.t() ) ;
+    gen_gamma1_p4CM.SetPxPyPzE(gamma1CM.x(), gamma1CM.y(), gamma1CM.z(), gamma1CM.t() ) ;
+    gen_gamma2_p4CM.SetPxPyPzE(gamma2CM.x(), gamma2CM.y(), gamma2CM.z(), gamma2CM.t() ) ;
 
 
     costhetaL = ( muonCM1.x()*muonCM2.x() 
@@ -426,12 +432,12 @@ MCanalyzer::beginJob()
   tree_->Branch("gen_gamma1_p4J",  "TLorentzVector",  &gen_muon1_p4J);
   tree_->Branch("gen_gamma2_p4J",  "TLorentzVector",  &gen_muon1_p4J);
 
-  tree_->Branch("gen_b_p4CM",     "XYZTLorentzVector",  &gen_b_p4CM);
-  tree_->Branch("gen_kaon_p4CM",  "XYZTLorentzVector",  &gen_kaon_p4CM);
-  tree_->Branch("gen_muon1_p4CM",  "XYZTLorentzVector",  &gen_muon1_p4CM);
-  tree_->Branch("gen_muon2_p4CM",  "XYZTLorentzVector",  &gen_muon2_p4CM);
-  tree_->Branch("gen_gamma1_p4CM",  "XYZTLorentzVector",  &gen_muon1_p4CM);
-  tree_->Branch("gen_gamma2_p4CM",  "XYZTLorentzVector",  &gen_muon1_p4CM);
+  tree_->Branch("gen_b_p4CM",     "TLorentzVector",  &gen_b_p4CM);
+  tree_->Branch("gen_kaon_p4CM",  "TLorentzVector",  &gen_kaon_p4CM);
+  tree_->Branch("gen_muon1_p4CM",  "TLorentzVector",  &gen_muon1_p4CM);
+  tree_->Branch("gen_muon2_p4CM",  "TLorentzVector",  &gen_muon2_p4CM);
+  tree_->Branch("gen_gamma1_p4CM",  "TLorentzVector",  &gen_muon1_p4CM);
+  tree_->Branch("gen_gamma2_p4CM",  "TLorentzVector",  &gen_muon1_p4CM);
   
   tree_->Branch("daughter_id",   "vector", &daughter_id);
   tree_->Branch("number_daughters",  &number_daughters);
