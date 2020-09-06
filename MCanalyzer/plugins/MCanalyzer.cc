@@ -145,7 +145,7 @@ void
 MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
-  bool JHOVANNYS=false;
+  bool JHOVANNYS=true;
   bool debug = false;
 
   gen_b_p4.SetPxPyPzE(0.,0.,0.,0.);
@@ -319,13 +319,22 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     // NOW CREATE THE BOOST TO DILEPTON CM FRAME
+    if (JHOVANNYS){
+    math::XYZTLorentzVector muon1(gen_muon1_p4J.Px(), gen_muon1_p4J.Py(), gen_muon1_p4J.Pz(), gen_muon1_p4J.E());
+    math::XYZTLorentzVector muon2(gen_muon2_p4J.Px(), gen_muon2_p4J.Py(), gen_muon2_p4J.Pz(), gen_muon2_p4J.E());
+    math::XYZTLorentzVector kaon(gen_kaon_p4J.Px(), gen_kaon_p4J.Py(), gen_kaon_p4J.Pz(), gen_kaon_p4J.E());
+    math::XYZTLorentzVector bmeson(gen_b_p4J.Px(), gen_b_p4J.Py(), gen_b_p4J.Pz(), gen_b_p4J.E());
+    math::XYZTLorentzVector gamma1(gen_gamma1_p4J.Px(), gen_gamma1_p4J.Py(), gen_gamma1_p4J.Pz(), gen_gamma1_p4J.E());
+    math::XYZTLorentzVector gamma2(gen_gamma2_p4J.Px(), gen_gamma2_p4J.Py(), gen_gamma2_p4J.Pz(), gen_gamma2_p4J.E());
+    }
+    else {
     math::XYZTLorentzVector muon1(gen_muon1_p4.Px(), gen_muon1_p4.Py(), gen_muon1_p4.Pz(), gen_muon1_p4.E());
     math::XYZTLorentzVector muon2(gen_muon2_p4.Px(), gen_muon2_p4.Py(), gen_muon2_p4.Pz(), gen_muon2_p4.E());
     math::XYZTLorentzVector kaon(gen_kaon_p4.Px(), gen_kaon_p4.Py(), gen_kaon_p4.Pz(), gen_kaon_p4.E());
     math::XYZTLorentzVector bmeson(gen_b_p4.Px(), gen_b_p4.Py(), gen_b_p4.Pz(), gen_b_p4.E());
     math::XYZTLorentzVector gamma1(gen_gamma1_p4.Px(), gen_gamma1_p4.Py(), gen_gamma1_p4.Pz(), gen_gamma1_p4.E());
-    math::XYZTLorentzVector gamma2(gen_gamma2_p4.Px(), gen_gamma2_p4.Py(), gen_gamma2_p4.Pz(), gen_gamma2_p4.E());
-   
+    math::XYZTLorentzVector gamma2(gen_gamma2_p4.Px(), gen_gamma2_p4.Py(), gen_gamma2_p4.Pz(), gen_gamma2_p4.E()); 
+    }
     math::XYZTLorentzVector dilep = muon1+muon2;
     ROOT::Math::Boost dileptonCMBoost(dilep.BoostToCM());
 
