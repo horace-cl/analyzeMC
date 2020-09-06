@@ -224,7 +224,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 //int nm=0;
               }
               //LOOK FOR GRANDAUGHTERS TO BE MU+- 13
-              else if( (abs(gdau->pdgId())==13) (gdau->status() == 1) ){
+              else if( (abs(gdau->pdgId())==13) && (gdau->status() == 1) ){
                 if (dau->pdgId()*gdau->pdgId()<0){
                   gen_muon1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
                 }
@@ -233,7 +233,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 }
               }
               //LOOK FOR ANY DAMN PHOTON
-              else if(dau->pdgId()==22 & false){
+              else if((dau->pdgId()==22) && false){
                 if (debug) std::cout << "foundit : "<< foundit<< std::endl;
                 if (foundit==0){
                   gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
@@ -280,9 +280,10 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                                + muonCM1J.z()*kaonCMJ.z() ) / (muonCM1J.P()*kaonCMJ.P() );
       }
     }
+   
+  bplus=bplus_;
   }
  
-  bplus=bplus_;
 
 
   // from 
