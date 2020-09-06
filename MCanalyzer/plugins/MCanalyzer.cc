@@ -284,7 +284,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               costhetaKLJ = ( muonCM1J.x()*kaonCMJ.x()
                                  + muonCM1J.y()*kaonCMJ.y()
                                  + muonCM1J.z()*kaonCMJ.z() ) / (muonCM1J.P()*kaonCMJ.P() );
-          
+}          
       }
     }
    
