@@ -199,14 +199,14 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if ( pruned.isValid() ) {
     if (debug) std::cout << "VALID SIZE = " << pruned->size() << std::endl;
     int foundit = 0;
-    int bplus = 0;
+    int bplus_ = 0;
     for (size_t i=0; i<pruned->size(); i++) {
       //GETTING DAUGHTERS!
       const reco::Candidate *dau = &(*pruned)[i];
       //ONLY LOOKING FOR B+-
       if ( (abs(dau->pdgId()) == 521) && (dau->status() == 2) ) {
             //foundit++;
-            bplus++;
+            bplus_++;
             gen_b_p4J.SetPtEtaPhiM(dau->pt(),dau->eta(),dau->phi(),dau->mass());
             gen_b_vtx.SetXYZ(dau->vx(),dau->vy(),dau->vz());
             //int npion=0;
@@ -218,13 +218,13 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               //GETTING GRANDAUGHTERS
               const reco::Candidate *gdau = dau->daughter(k);
               //LOOK FOR GRANDAUGHTERS TO BE K+-  321
-              if ( abs(gdau->pdgId())==321 ) { //&& gdau->status()==2) { HERE JHOVANNY WAS LOOKING FOR THE JPSI(443)
+              if ( (abs(gdau->pdgId())==321)  && (gdau->status() == 1) ) { //&& gdau->status()==2) { HERE JHOVANNY WAS LOOKING FOR THE JPSI(443)
                 //foundit++;
                 gen_kaon_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
                 //int nm=0;
               }
               //LOOK FOR GRANDAUGHTERS TO BE MU+- 13
-              else if( abs(gdau->pdgId())==13){
+              else if( (abs(gdau->pdgId())==13) (gdau->status() == 1) ){
                 if (dau->pdgId()*gdau->pdgId()<0){
                   gen_muon1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
                 }
@@ -233,7 +233,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 }
               }
               //LOOK FOR ANY DAMN PHOTON
-              else if(dau->pdgId()==22){
+              else if(dau->pdgId()==22 & false){
                 if (debug) std::cout << "foundit : "<< foundit<< std::endl;
                 if (foundit==0){
                   gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
@@ -282,6 +282,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
   }
  
+  bplus=bplus_;
 
 
   // from 
