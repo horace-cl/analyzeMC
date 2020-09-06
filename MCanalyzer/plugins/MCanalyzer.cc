@@ -144,6 +144,7 @@ void
 MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
+  bool JHOVANNYS=true;
 
   gen_b_p4.SetPxPyPzE(0.,0.,0.,0.);
   gen_kaon_p4.SetPxPyPzE(0.,0.,0.,0.);
@@ -177,8 +178,9 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //JHOVANNYS
   //JHOVANNYS
   std::cout << "PRUNED? \n";
+  std::cout << "SIZE = " << pruned->size() << std::endl;
   if ( pruned.isValid() ) {
-    std::cout << "SIZE = " << pruned->size() << std::endl;
+    std::cout << "VALID SIZE = " << pruned->size() << std::endl;
     int foundit = 0;
     for (size_t i=0; i<pruned->size(); i++) {
       //GETTING DAUGHTERS!
@@ -246,7 +248,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Alignment/OfflineValidation/plugins/ValidationMisalignedTracker.cc:
   // Iterate over all particles
   for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin(); p != myGenEvent->particles_end(); ++p ) { 
-
+    if (JHOVANNYS) break;
     if (abs((*p)->pdg_id())!=521){
       //std::cout << "\t\tNot B+\n";
       continue;
@@ -298,7 +300,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       else if ((*aDaughter)->pdg_id()==22){
         if (photons==0){
           gen_gamma1_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
-	photons=1;
+        	photons=1;
         }
         else{
           gen_gamma2_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
