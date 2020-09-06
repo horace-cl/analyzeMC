@@ -144,8 +144,8 @@ void
 MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
-  bool JHOVANNYS=true;
-  bool debug = true;
+  bool JHOVANNYS=false;
+  bool debug = false;
 
   gen_b_p4.SetPxPyPzE(0.,0.,0.,0.);
   gen_kaon_p4.SetPxPyPzE(0.,0.,0.,0.);
@@ -163,7 +163,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   gen_gamma2_p4J.SetPtEtaPhiM(0.,0.,0.,0.);
 
 
-  std::cout << "HELLO FROM ANALYZER! " << std::endl;
+  if (debug) std::cout << "HELLO FROM ANALYZER! " << std::endl;
  
   //edm::Handle<reco::GenParticleCollection> pruned;
   edm::Handle<std::vector<reco::GenParticle>> pruned; 
@@ -178,10 +178,10 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //JHOVANNYS
   //JHOVANNYS
   //JHOVANNYS
-  std::cout << "PRUNED? \n";
+  if (debug) std::cout << "PRUNED? \n";
   std::cout << "SIZE = " << pruned->size() << std::endl;
   if ( pruned.isValid() ) {
-    std::cout << "VALID SIZE = " << pruned->size() << std::endl;
+    if (debug) std::cout << "VALID SIZE = " << pruned->size() << std::endl;
     int foundit = 0;
     for (size_t i=0; i<pruned->size(); i++) {
       //GETTING DAUGHTERS!
@@ -215,7 +215,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               }
               //LOOK FOR ANY DAMN PHOTON
               else if(dau->pdgId()==22){
-                std::cout << "foundit : "<< foundit<< std::endl;
+                if (debug) std::cout << "foundit : "<< foundit<< std::endl;
                 if (foundit==0){
                   gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
                 }
@@ -236,12 +236,12 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Calibration/HcalCalibAlgos/plugins/SimAnalyzerMinbias.cc
   if (!genEvtHandle.isValid()) 
   {
-      std::cout << " ------------->  no HepMCProduct found" << std::endl;    
+      if (debug) std::cout << " ------------->  no HepMCProduct found" << std::endl;    
   } 
   HepMC::GenEvent * myGenEvent = new  HepMC::GenEvent(*(genEvtHandle->GetEvent()));
-  std::cout << "Event with : \n"; 
+  if (debug) std::cout << "Event with : \n"; 
   std::cout << myGenEvent->particles_size() << " particles \n";
-  std::cout << myGenEvent->vertices_size() << " vertices\n";
+  if (debug) std::cout << myGenEvent->vertices_size() << " vertices\n";
 
 
 
@@ -251,23 +251,23 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   for ( HepMC::GenEvent::particle_iterator p = myGenEvent->particles_begin(); p != myGenEvent->particles_end(); ++p ) { 
     if (JHOVANNYS) break;
     if (abs((*p)->pdg_id())!=521){
-      //std::cout << "\t\tNot B+\n";
+      //if (debug) std::cout << "\t\tNot B+\n";
       continue;
     }
 
-    std::cout << "\tPDG ID : " << (*p)->pdg_id() << std::endl;
-    std::cout << "\tSTATUS : " << (*p)->status() << std::endl;
+    if (debug) std::cout << "\tPDG ID : " << (*p)->pdg_id() << std::endl;
+    if (debug) std::cout << "\tSTATUS : " << (*p)->status() << std::endl;
 
-    std::cout << "PX " << (*p)->momentum().px() << std::endl;
-    std::cout << "PY " << (*p)->momentum().py() << std::endl;
-    std::cout << "PZ " << (*p)->momentum().pz() << std::endl;
-    std::cout << "ENERGY " << (*p)->momentum().e() << std::endl;
-    std::cout << "MASS " << (*p)->momentum().m() << std::endl; 
+    if (debug) std::cout << "PX " << (*p)->momentum().px() << std::endl;
+    if (debug) std::cout << "PY " << (*p)->momentum().py() << std::endl;
+    if (debug) std::cout << "PZ " << (*p)->momentum().pz() << std::endl;
+    if (debug) std::cout << "ENERGY " << (*p)->momentum().e() << std::endl;
+    if (debug) std::cout << "MASS " << (*p)->momentum().m() << std::endl; 
     std::vector<int> ids;
 
     gen_b_p4.SetPxPyPzE((*p)->momentum().px(),(*p)->momentum().py(),(*p)->momentum().pz(),(*p)->momentum().e());
 
-    //std::cout << "\tDaugthers : " << (*p)->numberOfDaughters() << std::endl;
+    //if (debug) std::cout << "\tDaugthers : " << (*p)->numberOfDaughters() << std::endl;
     std::cout << "\tDaugthers : " << std::endl;
     int photons=0;
 
@@ -280,8 +280,8 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     {
       //Just a vector to have control over all daugther particles
       ids.push_back((*aDaughter)->pdg_id());
-      std::cout << "\t\tPDG ID : " << (*aDaughter)->pdg_id() << std::endl;
-      std::cout << "\t\tSTATUS : " << (*aDaughter)->status() << std::endl;
+      if (debug) std::cout << "\t\tPDG ID : " << (*aDaughter)->pdg_id() << std::endl;
+      if (debug) std::cout << "\t\tSTATUS : " << (*aDaughter)->status() << std::endl;
 
       //KAON MUST HAVE THE SAME SIGN AS THE B CHARGED MESON
       if (abs((*aDaughter)->pdg_id())==321){
@@ -306,7 +306,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         else{
           gen_gamma2_p4.SetPxPyPzE((*aDaughter)->momentum().px(),(*aDaughter)->momentum().py(),(*aDaughter)->momentum().pz(),(*aDaughter)->momentum().e());
         }
-      //std::cout << "\t\tGrandDaughters : " << (*aDaughter)->numberOfDaughters() << std::endl;
+      //if (debug) std::cout << "\t\tGrandDaughters : " << (*aDaughter)->numberOfDaughters() << std::endl;
       }
     }
 
@@ -332,7 +332,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                        + muonCM1.z()*kaonCM.z() ) / (muonCM1.P()*kaonCM.P() );
 
   
-  std::cout << "Number of Daugthers : "<< ids.size() <<std::endl;
+  if (debug) std::cout << "Number of Daugthers : "<< ids.size() <<std::endl;
   daughter_id.push_back(ids);
   number_daughters= ids.size();
 
@@ -359,7 +359,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideDataFormatGeneratorInterface
   // int i=0;
   // int j=0;
-  // std::cout << "HANDLE OBTAINED" << std::endl;
+  // if (debug) std::cout << "HANDLE OBTAINED" << std::endl;
   // for ( HepMC::GenEvent::vertex_const_iterator
   //           itVtx=Evt->vertices_begin(); itVtx!=Evt->vertices_end(); ++itVtx )
   //   {
