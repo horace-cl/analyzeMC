@@ -242,13 +242,16 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               //VAMOS A COMNETARLO POR EL MOMENTO
               else if((gdau->pdgId()==22)){
                 if (debug) std::cout << "foundit : "<< foundit<< std::endl;
-                if (foundit==0){
-                  gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
-                }
-                else{
-                  gen_gamma2_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
-                }
-                foundit++;
+                TLorentzVector gamma;
+                gamma.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                gen_gamma1_p4J = gen_gamma1_p4J+gamma;
+                // if (foundit==0){
+                //   gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                // }
+                // else{
+                //   gen_gamma2_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                // }
+                // foundit++;
               }
             }
             daughter_idJ.push_back(idsJ);
