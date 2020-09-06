@@ -240,7 +240,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               }
               //LOOK FOR ANY DAMN PHOTON
               //VAMOS A COMNETARLO POR EL MOMENTO
-              else if((dau->pdgId()==22)){
+              else if((gdau->pdgId()==22)){
                 if (debug) std::cout << "foundit : "<< foundit<< std::endl;
                 if (foundit==0){
                   gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
