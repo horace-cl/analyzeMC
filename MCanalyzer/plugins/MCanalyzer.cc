@@ -101,7 +101,7 @@ class MCanalyzer : public edm::EDAnalyzer {
       TTree*         tree_;
       std::vector<std::vector<int>>    daughter_id;
      // std::vector<int> number_daughters;
-      int number_daughters, number_daughtersJ;
+      int number_daughters, number_daughtersJ, bplus;
       float costhetaL, costhetaKL, costhetaLJ, costhetaKLJ;
 };
 
@@ -118,7 +118,7 @@ class MCanalyzer : public edm::EDAnalyzer {
 // constructors and destructor
 //
 MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
- :number_daughters(0), number_daughtersJ(0), costhetaL(0.0), costhetaKL(0.0), costhetaLJ(0.0), costhetaKLJ(0.0)
+ :number_daughters(0), number_daughtersJ(0), bplus(0), costhetaL(0.0), costhetaKL(0.0), costhetaLJ(0.0), costhetaKLJ(0.0)
 {
   std::cout << "INITIALIZER?" << std::endl;
   genCands_ = consumes<std::vector<reco::GenParticle>>(edm::InputTag("genParticles"));
@@ -199,12 +199,14 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if ( pruned.isValid() ) {
     if (debug) std::cout << "VALID SIZE = " << pruned->size() << std::endl;
     int foundit = 0;
+    int bplus = 0;
     for (size_t i=0; i<pruned->size(); i++) {
       //GETTING DAUGHTERS!
       const reco::Candidate *dau = &(*pruned)[i];
       //ONLY LOOKING FOR B+-
-      if ( (abs(dau->pdgId()) == 521) ) { //&& (dau->status() == 2) ) {
+      if ( (abs(dau->pdgId()) == 521) && (dau->status() == 2) ) {
             //foundit++;
+            bplus++;
             gen_b_p4J.SetPtEtaPhiM(dau->pt(),dau->eta(),dau->phi(),dau->mass());
             gen_b_vtx.SetXYZ(dau->vx(),dau->vy(),dau->vz());
             //int npion=0;
@@ -459,6 +461,8 @@ MCanalyzer::beginJob()
   tree_->Branch("number_daughtersJ",  &number_daughtersJ);
   tree_->Branch("costhetaLJ",  &costhetaLJ);
   tree_->Branch("costhetaKLJ",  &costhetaKLJ);
+
+  tree->Branch('Nbplus', &bplus);
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
