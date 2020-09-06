@@ -46,7 +46,6 @@ HCL
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "TFile.h"
 #include "TTree.h"
-#include <vector>
 #include "TLorentzVector.h"
 #include "TVector3.h"
 #include <utility>
@@ -57,6 +56,7 @@ HCL
 #include <Math/VectorUtil.h>
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "CommonTools/CandUtils/interface/Booster.h"
+#include <vector>
 //
 // class declaration
 //
@@ -90,7 +90,8 @@ class MCanalyzer : public edm::EDAnalyzer {
       // ----------member data ---------------------------
       edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
       edm::EDGetTokenT<edm::HepMCProduct> hepmcproduct_;
-      edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
+      //edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
+      edm::EDGetTokenT<std::vector<reco::GenParticle>> genCands_;
       
       TLorentzVector gen_b_p4,gen_phi_p4,gen_kaon_p4,gen_muon1_p4,gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
       TLorentzVector gen_b_p4J,gen_phi_p4J,gen_kaon_p4J,gen_muon1_p4J,gen_muon2_p4J, gen_gamma1_p4J, gen_gamma2_p4J;
@@ -104,7 +105,7 @@ class MCanalyzer : public edm::EDAnalyzer {
 
 
 //
-//genCands_(consumes<reco::GenParticleCollection>(iConfig.getParameter < edm::InputTag > ("GenParticles"))), constants, enums and typedefs
+//genCands_(consumes<rec::GenParticleCollection>(iConfig.getParameter < edm::InputTag > ("GenParticles"))), constants, enums and typedefs
 //
 
 //
@@ -118,7 +119,7 @@ MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
  :number_daughters(0), costhetaL(0.0), costhetaKL(0.0)
 {
   std::cout << "INITIALIZER?" << std::endl;
-  genCands_ = consumes<reco::GenParticleCollection>(edm::InputTag("GenParticles"));
+  genCands_ = consumes<std::vector<reco::GenParticle>>(edm::InputTag("genParticles"));
   hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generatorSmeared"));
   
 }
@@ -162,7 +163,8 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   std::cout << "HELLO FROM ANALYZER! " << std::endl;
  
-  edm::Handle<reco::GenParticleCollection> pruned;
+  //edm::Handle<reco::GenParticleCollection> pruned;
+  edm::Handle<std::vector<reco::GenParticle>> pruned; 
   iEvent.getByToken(genCands_, pruned);
 
   edm::Handle<edm:: HepMCProduct > genEvtHandle;
@@ -175,11 +177,10 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //JHOVANNYS
   //JHOVANNYS
   std::cout << "PRUNED? \n";
-  std::cout << "SIZE = " << pruned->size() << std::endl;
   if ( pruned.isValid() ) {
+    std::cout << "SIZE = " << pruned->size() << std::endl;
     int foundit = 0;
     for (size_t i=0; i<pruned->size(); i++) {
-      foundit = 0;
       //GETTING DAUGHTERS!
       const reco::Candidate *dau = &(*pruned)[i];
       //ONLY LOOKING FOR B+-
@@ -197,7 +198,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               //LOOK FOR GRANDAUGHTERS TO BE K+-  443
               if ( abs(gdau->pdgId())==443 ) { //&& gdau->status()==2) { HERE JHOVANNY WAS LOOKING FOR THE JPSI(443)
                 //foundit++;
-                gen_kaon_p4_J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                gen_kaon_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
                 //int nm=0;
               }
               //LOOK FOR GRANDAUGHTERS TO BE MU+- 13
@@ -211,14 +212,15 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               }
               //LOOK FOR ANY DAMN PHOTON
               else if(dau->pdgId()==22){
-                ++foundit;
-                std::count << "foundit : "<< foundit<< std::endl;
+                std::cout << "foundit : "<< foundit<< std::endl;
                 if (foundit==0){
                   gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
                 }
                 else{
                   gen_gamma2_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
                 }
+
+                foundit++;
               }
             }
       }
