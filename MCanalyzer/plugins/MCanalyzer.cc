@@ -118,7 +118,7 @@ class MCanalyzer : public edm::EDAnalyzer {
 // constructors and destructor
 //
 MCanalyzer::MCanalyzer(const edm::ParameterSet& iConfig)
- :number_daughters(0), costhetaL(0.0), costhetaKL(0.0), number_daughtersJ(0), costhetaLJ(0.0), costhetaKLJ(0.0)
+ :number_daughters(0), number_daughtersJ(0), costhetaL(0.0), costhetaKL(0.0), costhetaLJ(0.0), costhetaKLJ(0.0)
 {
   std::cout << "INITIALIZER?" << std::endl;
   genCands_ = consumes<std::vector<reco::GenParticle>>(edm::InputTag("genParticles"));
