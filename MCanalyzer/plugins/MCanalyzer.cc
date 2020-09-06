@@ -215,7 +215,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             //int npion=0;
             std::cout << "NUMBER OF GARND?DAUGHTERS : "<< dau->numberOfDaughters() << std::endl;
             number_daughtersJ= dau->numberOfDaughters();
-            if (dau->numberOfDaughters()!=3) continue;
+            //if (dau->numberOfDaughters()3) continue;
 
             for (size_t k=0; k<dau->numberOfDaughters(); k++) {
               //GETTING GRANDAUGHTERS
@@ -238,16 +238,16 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               }
               //LOOK FOR ANY DAMN PHOTON
               //VAMOS A COMNETARLO POR EL MOMENTO
-              // else if((dau->pdgId()==22) && false){
-              //   if (debug) std::cout << "foundit : "<< foundit<< std::endl;
-              //   if (foundit==0){
-              //     gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
-              //   }
-              //   else{
-              //     gen_gamma2_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
-              //   }
-              //   foundit++;
-              // }
+              else if((dau->pdgId()==22)){
+                if (debug) std::cout << "foundit : "<< foundit<< std::endl;
+                if (foundit==0){
+                  gen_gamma1_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                }
+                else{
+                  gen_gamma2_p4J.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                }
+                foundit++;
+              }
             }
 
             if ((kaon_D==1) && (muon_D==2)){
@@ -284,7 +284,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               costhetaKLJ = ( muonCM1J.x()*kaonCMJ.x()
                                  + muonCM1J.y()*kaonCMJ.y()
                                  + muonCM1J.z()*kaonCMJ.z() ) / (muonCM1J.P()*kaonCMJ.P() );
-          }
+          
       }
     }
    
