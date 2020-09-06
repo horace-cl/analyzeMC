@@ -145,6 +145,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
   bool JHOVANNYS=true;
+  bool debug = true;
 
   gen_b_p4.SetPxPyPzE(0.,0.,0.,0.);
   gen_kaon_p4.SetPxPyPzE(0.,0.,0.,0.);
