@@ -195,7 +195,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //JHOVANNYS
   //JHOVANNYS
   if (debug) std::cout << "PRUNED? \n";
-  std::cout << "SIZE = " << pruned->size() << std::endl;
+  //std::cout << "SIZE = " << pruned->size() << std::endl;
   if ( pruned.isValid() ) {
     if (debug) std::cout << "VALID SIZE = " << pruned->size() << std::endl;
     int foundit = 0;
@@ -214,7 +214,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             gen_b_p4J.SetPtEtaPhiM(dau->pt(),dau->eta(),dau->phi(),dau->mass());
             gen_b_vtx.SetXYZ(dau->vx(),dau->vy(),dau->vz());
             //int npion=0;
-            std::cout << "NUMBER OF GARND?DAUGHTERS : "<< dau->numberOfDaughters() << std::endl;
+            //std::cout << "NUMBER OF GARND?DAUGHTERS : "<< dau->numberOfDaughters() << std::endl;
             number_daughtersJ= dau->numberOfDaughters();
             //if (dau->numberOfDaughters()3) continue;
 
@@ -334,7 +334,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     gen_b_p4.SetPxPyPzE((*p)->momentum().px(),(*p)->momentum().py(),(*p)->momentum().pz(),(*p)->momentum().e());
 
     //if (debug) std::cout << "\tDaugthers : " << (*p)->numberOfDaughters() << std::endl;
-    std::cout << "\tDaugthers : " << std::endl;
+    //std::cout << "\tDaugthers : " << std::endl;
     int photons=0;
 
     
