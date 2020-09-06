@@ -426,12 +426,12 @@ MCanalyzer::beginJob()
   tree_->Branch("gen_gamma1_p4J",  "TLorentzVector",  &gen_muon1_p4J);
   tree_->Branch("gen_gamma2_p4J",  "TLorentzVector",  &gen_muon1_p4J);
 
-  tree_->Branch("gen_b_p4CM",     "TLorentzVector",  &gen_b_p4CM);
-  tree_->Branch("gen_kaon_p4CM",  "TLorentzVector",  &gen_kaon_p4CM);
-  tree_->Branch("gen_muon1_p4CM",  "TLorentzVector",  &gen_muon1_p4CM);
-  tree_->Branch("gen_muon2_p4CM",  "TLorentzVector",  &gen_muon2_p4CM);
-  tree_->Branch("gen_gamma1_p4CM",  "TLorentzVector",  &gen_muon1_p4CM);
-  tree_->Branch("gen_gamma2_p4CM",  "TLorentzVector",  &gen_muon1_p4CM);
+  tree_->Branch("gen_b_p4CM",     "XYZTLorentzVector",  &gen_b_p4CM);
+  tree_->Branch("gen_kaon_p4CM",  "XYZTLorentzVector",  &gen_kaon_p4CM);
+  tree_->Branch("gen_muon1_p4CM",  "XYZTLorentzVector",  &gen_muon1_p4CM);
+  tree_->Branch("gen_muon2_p4CM",  "XYZTLorentzVector",  &gen_muon2_p4CM);
+  tree_->Branch("gen_gamma1_p4CM",  "XYZTLorentzVector",  &gen_muon1_p4CM);
+  tree_->Branch("gen_gamma2_p4CM",  "XYZTLorentzVector",  &gen_muon1_p4CM);
   
   tree_->Branch("daughter_id",   "vector", &daughter_id);
   tree_->Branch("number_daughters",  &number_daughters);
