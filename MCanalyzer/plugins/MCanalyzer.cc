@@ -221,7 +221,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             for (size_t k=0; k<dau->numberOfDaughters(); k++) {
               //GETTING GRANDAUGHTERS
               const reco::Candidate *gdau = dau->daughter(k);
-              idsJ.push_back(gdau->pdg_id());
+              idsJ.push_back(gdau->pdgId());
               //LOOK FOR GRANDAUGHTERS TO BE K+-  321
               if ( (abs(gdau->pdgId())==321)  && (gdau->status() == 1) ) { //&& gdau->status()==2) { HERE JHOVANNY WAS LOOKING FOR THE JPSI(443)
                 kaon_D++;
