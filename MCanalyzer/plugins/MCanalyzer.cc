@@ -99,7 +99,7 @@ class MCanalyzer : public edm::EDAnalyzer {
       TLorentzVector gen_b_p4CMJ,gen_phi_p4CMJ,gen_kaon_p4CMJ,gen_muon1_p4CMJ,gen_muon2_p4CMJ, gen_gamma1_p4CMJ, gen_gamma2_p4CMJ;
       TVector3       gen_b_vtx;
       TTree*         tree_;
-      std::vector<std::vector<int>>    daughter_id;
+      std::vector<std::vector<int>>    daughter_id, daughter_idJ;
      // std::vector<int> number_daughters;
       int number_daughters, number_daughtersJ, bplus;
       float costhetaL, costhetaKL, costhetaLJ, costhetaKLJ;
@@ -200,6 +200,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (debug) std::cout << "VALID SIZE = " << pruned->size() << std::endl;
     int foundit = 0;
     int bplus_ = 0;
+    std::vector<int> idsJ;
     
     for (size_t i=0; i<pruned->size(); i++) {
       //GETTING DAUGHTERS!
@@ -220,6 +221,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             for (size_t k=0; k<dau->numberOfDaughters(); k++) {
               //GETTING GRANDAUGHTERS
               const reco::Candidate *gdau = dau->daughter(k);
+              idsJ.push_back(gdau->pdg_id());
               //LOOK FOR GRANDAUGHTERS TO BE K+-  321
               if ( (abs(gdau->pdgId())==321)  && (gdau->status() == 1) ) { //&& gdau->status()==2) { HERE JHOVANNY WAS LOOKING FOR THE JPSI(443)
                 kaon_D++;
@@ -249,7 +251,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 foundit++;
               }
             }
-
+            daughter_idJ.push_back(idsJ);
             if ((kaon_D==1) && (muon_D==2)){
               math::XYZTLorentzVector muon1J(gen_muon1_p4J.Px(), gen_muon1_p4J.Py(), gen_muon1_p4J.Pz(), gen_muon1_p4J.E());
               math::XYZTLorentzVector muon2J(gen_muon2_p4J.Px(), gen_muon2_p4J.Py(), gen_muon2_p4J.Pz(), gen_muon2_p4J.E());
@@ -417,6 +419,7 @@ MCanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     tree_->Fill();
 
     daughter_id.clear();
+    daughter_idJ.clear();
 
   }
 
@@ -463,6 +466,8 @@ MCanalyzer::beginJob()
   tree_->Branch("gen_gamma2_p4CMJ",  "TLorentzVector",  &gen_gamma2_p4CMJ);
   
   tree_->Branch("daughter_id",   "vector", &daughter_id);
+  tree_->Branch("daughter_idJ",   "vector", &daughter_idJ);
+
   tree_->Branch("number_daughters",  &number_daughters);
   tree_->Branch("costhetaL",  &costhetaL);
   tree_->Branch("costhetaKL",  &costhetaKL);
