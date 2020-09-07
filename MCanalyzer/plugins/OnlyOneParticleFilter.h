@@ -2,10 +2,10 @@
 #define ONLYONEPARTICLEFILTER_h
 // -*- C++ -*-
 //
-// Package:    OnlyOneParticle
-// Class:      OnlyOneParticle
+// Package:    OnlyOneParticleFilter
+// Class:      OnlyOneParticleFilter
 // 
-/**\class OnlyOneParticle OnlyOneParticle.cc 
+/**\class OnlyOneParticleFilter OnlyOneParticleFilter.cc 
 
  Description: Filter events with only one particle
 
@@ -40,10 +40,10 @@ namespace edm {
   class HepMCProduct;
 }
 
-class OnlyOneParticle : public edm::global::EDFilter<> {
+class OnlyOneParticleFilter : public edm::global::EDFilter<> {
  public:
-  explicit OnlyOneParticle(const edm::ParameterSet&);
-  ~OnlyOneParticle() override;
+  explicit OnlyOneParticleFilter(const edm::ParameterSet&);
+  ~OnlyOneParticleFilter() override;
   
   
   bool filter(edm::StreamID, edm::Event&, const edm::EventSetup&) const override;
