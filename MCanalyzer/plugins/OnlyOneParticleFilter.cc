@@ -12,35 +12,10 @@ OnlyOneParticleFilter::OnlyOneParticleFilter(const edm::ParameterSet& iConfig) :
   fVerbose(iConfig.getUntrackedParameter("verbose",0)),
   token_(consumes<edm::HepMCProduct>(edm::InputTag(iConfig.getUntrackedParameter("moduleLabel",std::string("generator")),"unsmeared"))),
   particleID(iConfig.getUntrackedParameter("ParticleID", 0)),
-  //motherID(iConfig.getUntrackedParameter("MotherID", 0)),
-  chargeconju(iConfig.getUntrackedParameter("ChargeConjugation", true)),
-  //ndaughters(iConfig.getUntrackedParameter("NumberDaughters", 0)),
-  //maxptcut(iConfig.getUntrackedParameter("MaxPt", 14000.))
+  chargeconju(iConfig.getUntrackedParameter("ChargeConjugation", true))
 {
-  //now do what ever initialization is needed
-  // vector<int> defdauID;
-  // defdauID.push_back(0);
-  // dauIDs = iConfig.getUntrackedParameter< vector<int> >("DaughterIDs",defdauID);
-  // vector<double> defminptcut;
-  // defminptcut.push_back(0.);
-  // minptcut = iConfig.getUntrackedParameter< vector<double> >("MinPt",defminptcut);
-  // vector<double> defminetacut;
-  // defminetacut.push_back(-10.);
-  // minetacut = iConfig.getUntrackedParameter< vector<double> >("MinEta",defminetacut);
-  // vector<double> defmaxetacut;
-  // defmaxetacut.push_back(10.);
-  // maxetacut = iConfig.getUntrackedParameter< vector<double> >("MaxEta",defmaxetacut);
-
   edm::LogInfo("OnlyOneParticleFilter") << "----------------------------------------------------------------------" << endl;
   edm::LogInfo("OnlyOneParticleFilter") << "--- OnlyOneParticleFilter" << endl;
-  // for (unsigned int i=0; i<dauIDs.size(); ++i) {
-	 //  edm::LogInfo("OnlyOneParticleFilter") << "ID: " <<  dauIDs[i] << " pT > " << minptcut[i] << " " << minetacut[i] << " eta < " << maxetacut[i] << endl;
-  // }
-  // edm::LogInfo("OnlyOneParticleFilter") << "maxptcut   = " << maxptcut << endl;
-  // edm::LogInfo("OnlyOneParticleFilter") << "particleID = " << particleID << endl;
-  // edm::LogInfo("OnlyOneParticleFilter") << "motherID   = " << motherID << endl;
-
- // create pythia8 instance to access particle data
   edm::LogInfo("OnlyOneParticleFilter") << "Creating pythia8 instance for particle properties" << endl;
   if(!fLookupGen.get()) fLookupGen.reset(new Pythia());
 }
@@ -95,7 +70,7 @@ bool OnlyOneParticleFilter::filter(edm::StreamID,edm::Event& iEvent, const edm::
 
   delete myGenEvent; 
   return accepted;
-
+}
  //    // -- Check for mother of this particle
  //    if (0 != motherID) {
  //      OK = 0; 
