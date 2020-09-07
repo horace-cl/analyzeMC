@@ -32,6 +32,7 @@
 <use   name="TrackingTools/TransientTrack"/>
 <use   name="TrackingTools/IPTools"/>
 <use   name="PhysicsTools/PatUtils"/>
+<use   name="pythia8"/>
 
 <flags EDM_PLUGIN="1"/>
 
