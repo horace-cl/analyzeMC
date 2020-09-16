@@ -23,7 +23,7 @@ class MiniAODGenPartAnalyzer : public edm::EDAnalyzer {
 public:
 explicit MiniAODGenPartAnalyzer(const edm::ParameterSet&);
 ~MiniAODGenPartAnalyzer();
-bool isAncestor(const reco::Candidate * ancestor, const reco::Candidate * particle);
+bool isAncestor(const reco::Candidate * ancestor, const reco::Candidate * particle, int &calls);
 
 
 
@@ -48,17 +48,17 @@ MiniAODGenPartAnalyzer::~MiniAODGenPartAnalyzer()
 }
 
 //Check recursively if any ancestor of particle is the given one
-bool MiniAODGenPartAnalyzer::isAncestor(const reco::Candidate* ancestor, const reco::Candidate * particle, const int * calls)
+bool MiniAODGenPartAnalyzer::isAncestor(const reco::Candidate* ancestor, const reco::Candidate * particle, int & calls)
 {
   //particle is already the ancestor
   if(ancestor == particle ) return true;
 
   //otherwise loop on mothers, if any and return true if the ancestor is found
   // we also increase the counter by one
-  calls++;
+  calls+=1;
   for(size_t i=0;i< particle->numberOfMothers();i++)
   {
-    if(isAncestor(ancestor,particle->mother(i))) return true;
+    if(isAncestor(ancestor,particle->mother(i), calls)) return true;
   }
   //if we did not return yet, then particle and ancestor are not relatives
     return false;
@@ -84,16 +84,17 @@ MiniAODGenPartAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 
   for(size_t i=0; i<pruned->size();i++){
     if(abs((*pruned)[i].pdgId()) == 521){
+    //if(abs((*pruned)[i].pdgId()) > 500 && abs((*pruned)[i].pdgId()) <600){
       const Candidate * bMeson = &(*pruned)[i];
       std::cout << "PdgID: " << bMeson->pdgId() << " pt " << bMeson->pt() << " eta: " << bMeson->eta() << " phi: " << bMeson->phi() << std::endl;
       std::cout << "  found daugthers: " << std::endl;
       for(size_t j=0; j<packed->size();j++){
-        int calls=0;
+        int Ncalls=0;
         //get the pointer to the first survied ancestor of a given packed GenParticle in the prunedCollection 
         const Candidate * motherInPrunedCollection = (*packed)[j].mother(0) ;
-        if(motherInPrunedCollection != nullptr && isAncestor( bMeson , motherInPrunedCollection, *calls)){
+        if(motherInPrunedCollection != nullptr && isAncestor( bMeson , motherInPrunedCollection, Ncalls)){
           std::cout << "     PdgID: " << (*packed)[j].pdgId() << " pt " << (*packed)[j].pt() << " eta: " << (*packed)[j].eta() << " phi: " << (*packed)[j].phi() << std::endl;
-          std::cout << "           calls: " << calls << std::endl;
+          std::cout << "           calls: " << Ncalls << std::endl;
         }
       }
     }
