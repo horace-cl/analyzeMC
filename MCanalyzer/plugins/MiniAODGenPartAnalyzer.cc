@@ -95,7 +95,7 @@ MiniAODGenPartAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup&
   using namespace reco;
   using namespace pat;
 
-  bool debug = true;
+  bool debug = false;
   bool iskaon, isMuon1, isMuon2;
 
 
@@ -158,8 +158,10 @@ MiniAODGenPartAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup&
               gen_muon2_p4.SetPtEtaPhiM((*packed)[j].pt(),(*packed)[j].eta(),(*packed)[j].phi(),(*packed)[j].mass()); 
             }
           }
-          std::cout << "     PdgID: " << (*packed)[j].pdgId() << " pt " << (*packed)[j].pt() << " eta: " << (*packed)[j].eta() << " phi: " << (*packed)[j].phi() << std::endl;
-          std::cout << "           calls: " << Ncalls << std::endl;
+          if(debug){
+            std::cout << "     PdgID: " << (*packed)[j].pdgId() << " pt " << (*packed)[j].pt() << " eta: " << (*packed)[j].eta() << " phi: " << (*packed)[j].phi() << std::endl;
+            std::cout << "           calls: " << Ncalls << std::endl;
+          }
         }
       }
 

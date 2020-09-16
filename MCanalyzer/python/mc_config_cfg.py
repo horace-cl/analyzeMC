@@ -31,7 +31,7 @@ print(sys.argv)
 if len(sys.argv)>2:
 	file_name = sys.argv[2]+'.root'
 else:
-	file_name = 'output.root'
+	file_name = 'MINI-SIM.root'
 print(file_name)
 process.TFileService = cms.Service("TFileService",
         fileName = cms.string(file_name),                                  
