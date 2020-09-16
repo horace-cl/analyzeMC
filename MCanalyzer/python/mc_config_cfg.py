@@ -27,10 +27,12 @@ process.MiniSim = cms.EDAnalyzer('MiniAODGenPartAnalyzer',
 
 
 #OUTPUT
-if len(sys.argv)>1:
-	file_name = sys.argv[1]+'.root'
+print(sys.argv)
+if len(sys.argv)>2:
+	file_name = sys.argv[2]+'.root'
 else:
 	file_name = 'output.root'
+print(file_name)
 process.TFileService = cms.Service("TFileService",
         fileName = cms.string(file_name),                                  
 )
