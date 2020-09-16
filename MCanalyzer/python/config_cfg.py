@@ -8,9 +8,9 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 
-files_ = glob('/eos/user/h/hcrottel/PrivateMC-2020-b_kmumu_PHSPS/crab_PrivateMC-2020-b_kmumu_PHSPS-2020-09-14-06-57/200914_045749/0000/step0*')
-
+files_ = glob('/eos/user/h/hcrottel/PrivateMC-2020-b_kmumu_PHSPS/crab_PrivateMC-2020-b_kmumu_PHSPS-2020-09-14-06-57/200914_045749/0000/step3*')
 print(files_)
+
 process.source = cms.Source("PoolSource",
                                 # replace 'myfile.root' with the source file you want to use
                                 fileNames = cms.untracked.vstring(
@@ -24,7 +24,7 @@ process.source = cms.Source("PoolSource",
 
 process.TFileService = cms.Service("TFileService",
 #        fileName = cms.string('Rootuple_BstoJpsiphi_2018_MiniAOD.root'),
-         fileName = cms.string('GEN-SIM.root'),                                  
+         fileName = cms.string('MINI.root'),                                  
 )
 
 process.demo = cms.EDAnalyzer('MCanalyzer'
