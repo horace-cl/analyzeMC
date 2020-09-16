@@ -16,8 +16,24 @@
  #include "DataFormats/Candidate/interface/Candidate.h"
  #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
- #include "TLorentzVector.h"
- #include "TTree.h"
+ //#include "TLorentzVector.h"
+ //#include "TTree.h"
+ //#include "Math/GenVector/Boost.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "TFile.h"
+#include "TTree.h"
+#include "TLorentzVector.h"
+#include "TVector3.h"
+#include <utility>
+#include <string>
+#include "Math/GenVector/Boost.h"
+#include "TVector3.h"
+#include "TMatrixD.h"
+#include <Math/VectorUtil.h>
+#include "DataFormats/Math/interface/LorentzVector.h"
+#include "CommonTools/CandUtils/interface/Booster.h"
+#include <vector>
  //
  // class declaration
  //
@@ -36,11 +52,11 @@ class MiniAODGenPartAnalyzer : public edm::EDAnalyzer {
     virtual void endJob() override;
     TLorentzVector gen_b_p4, gen_phi_p4, gen_kaon_p4, gen_muon1_p4, gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
     TLorentzVector gen_b_p4CM, gen_phi_p4CM, gen_kaon_p4CM, gen_muon1_p4CM, gen_muon2_p4CM, gen_gamma1_p4CM, gen_gamma2_p4CM;
-    float costhetaL, costhetaKL
     TTree*         tree_;
 
     edm::EDGetTokenT<edm::View<reco::GenParticle> > prunedGenToken_;
     edm::EDGetTokenT<edm::View<pat::PackedGenParticle> > packedGenToken_;
+    float costhetaL, costhetaKL;
 };
 
 MiniAODGenPartAnalyzer::MiniAODGenPartAnalyzer(const edm::ParameterSet& iConfig):
@@ -148,7 +164,7 @@ MiniAODGenPartAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup&
       }
 
       if (iskaon && isMuon1 && isMuon2){
-        math::XYZTLorentzVector muon1J(gen_muon1_p4.Px(), gen_muon1_p4.Py(), gen_muon1_p4.Pz(), gen_muon1_p4.E());
+        math::XYZTLorentzVector muon1(gen_muon1_p4.Px(), gen_muon1_p4.Py(), gen_muon1_p4.Pz(), gen_muon1_p4.E());
         math::XYZTLorentzVector muon2(gen_muon2_p4.Px(), gen_muon2_p4.Py(), gen_muon2_p4.Pz(), gen_muon2_p4.E());
         math::XYZTLorentzVector kaon(gen_kaon_p4.Px(), gen_kaon_p4.Py(), gen_kaon_p4.Pz(), gen_kaon_p4.E());
         math::XYZTLorentzVector bmeson(gen_b_p4.Px(), gen_b_p4.Py(), gen_b_p4.Pz(), gen_b_p4.E());
