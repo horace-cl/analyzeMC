@@ -118,7 +118,7 @@ MCTracks::MCTracks(const edm::ParameterSet& iConfig)
   std::cout << "INITIALIZER?" << std::endl;
   genCands_ = consumes<std::vector<reco::GenParticle>>(edm::InputTag("genParticles"));
   hepmcproduct_ = consumes<edm::HepMCProduct>(edm::InputTag("generatorSmeared"));
-  
+  std::cout << "INITIALIZED\n";
 }
 
 
@@ -141,7 +141,7 @@ void
 MCTracks::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
-  bool debug = false;
+  bool debug = true;
 
   if (debug) std::cout << "HELLO FROM ANALYZER! " << std::endl;
  

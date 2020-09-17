@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.Config as cms
 from glob import glob
 
-process = cms.Process("Demo")
+process = cms.Process("tracks")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 
@@ -10,7 +10,6 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 
 files_ = glob('/eos/user/h/hcrottel/PrivateMC-2020-b_kmumu_PHSPS/crab_PrivateMC-2020-b_kmumu_PHSPS-2020-09-14-06-57/200914_045749/0000/step0*')
-print(files_)
 
 process.source = cms.Source("PoolSource",
                                 # replace 'myfile.root' with the source file you want to use
@@ -28,7 +27,7 @@ process.TFileService = cms.Service("TFileService",
          fileName = cms.string('GEN-SIM-tracks.root'),                                  
 )
 
-process.demo = cms.EDAnalyzer('MCTracks'
+process.tracks = cms.EDAnalyzer('MCTracks'
                               )
 
-process.p = cms.Path(process.demo)
+process.p = cms.Path(process.tracks)
