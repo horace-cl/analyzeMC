@@ -156,20 +156,14 @@ MCTracks::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //std::cout << "SIZE = " << pruned->size() << std::endl;
   if ( pruned.isValid() ) {
     if (debug) std::cout << "VALID SIZE = " << pruned->size() << std::endl;
-    int foundit = 0;
-    int bplus_ = 0;
-    std::vector<int> idsJ;
     
     for (size_t i=0; i<pruned->size(); i++) {
       //GETTING DAUGHTERS!
-      int kaon_D = 0;
-      int muon_D = 0;
       const reco::Candidate *dau = &(*pruned)[i];
       //ONLY LOOKING FOR B+-
      // if ((abs(dau->pdgId()) == 521) && (dau->status() == 2) ) {
 		  if (dau->status() == 2){
             
-            number_daughtersJ= dau->numberOfDaughters();
             //if (dau->numberOfDaughters()3) continue;
 
             for (size_t k=0; k<dau->numberOfDaughters(); k++) {
@@ -177,10 +171,10 @@ MCTracks::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               const reco::Candidate *gdau = dau->daughter(k);
               if ((gdau->status() == 1) && gdau->charge()!=0){
                 motherID.push_back(dau->pdgId());
-                pdg_id.push_back(gdau->pdgId());
+                pdgID.push_back(gdau->pdgId());
                 TLorentzVector p4;
                 p4.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
-                tracksP4.push_back(p4)
+                tracksP4.push_back(p4);
 
               }
             }
@@ -191,7 +185,7 @@ MCTracks::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
  
   tree_->Fill();
 
-  daughter_idJ.clear();
+ 
   tracksP4.clear();
   pdgID.clear();
   motherID.clear();
