@@ -95,7 +95,14 @@ class MCTracks : public edm::EDAnalyzer {
       
       TTree*         tree_;
 
-			std::vector<TLorentzVector>      tracksP4;
+			//std::vector<TLorentzVector>      tracksP4;
+      std::vector<float>               px;
+      std::vector<float>               py;
+      std::vector<float>               pz;
+      std::vector<float>               energy;
+      std::vector<float>               pt;
+      std::vector<float>               eta;
+      std::vector<float>               phi;
 			std::vector<int>                 pdgID;
 			std::vector<int>                 motherID;
 };
@@ -172,9 +179,16 @@ MCTracks::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               if ((gdau->status() == 1) && gdau->charge()!=0){
                 motherID.push_back(dau->pdgId());
                 pdgID.push_back(gdau->pdgId());
-                TLorentzVector p4;
-                p4.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
-                tracksP4.push_back(p4);
+                //TLorentzVector p4;
+                px.push_back(gdau->px());
+                py.push_back(gdau->py());
+                pz.push_back(gdau->pz());
+                pt.push_back(gdau->pt());
+                energy.push_back(gdau->energy());
+                eta.push_back(gdau->eta());
+                phi.push_back(gdau->phi());
+                //p4.SetPtEtaPhiM(gdau->pt(),gdau->eta(),gdau->phi(),gdau->mass());
+                //tracksP4.push_back(p4);
 
               }
             }
@@ -186,7 +200,14 @@ MCTracks::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   tree_->Fill();
 
  
-  tracksP4.clear();
+  //tracksP4.clear();
+  px.clear();
+  py.clear();
+  pz.clear();
+  pt.clear();
+  energy.clear();
+  eta.clear();
+  phi.clear();
   pdgID.clear();
   motherID.clear();
 }
@@ -199,11 +220,17 @@ MCTracks::beginJob()
   std::cout << "Beginning analyzer job" << std::endl;
 
   edm::Service<TFileService> fs;
-  tree_ = fs->make<TTree>("ntuple","B+->K+ mu mu ntuple");
-
-  tree_->Branch("tracksP4",   "vector", &tracksP4);
-  tree_->Branch("pdgID",   "vector", &pdgID);
+  tree_ = fs->make<TTree>("ntuple","B+->K+ mu mu tracks ntuple");
+  //tree_->Branch("tracksP4",   "vector", &tracksP4);
+  tree_->Branch("px",   "vector", &px);
+  tree_->Branch("py",   "vector", &py);
+  tree_->Branch("pz",   "vector", &pz);
+  tree_->Branch("energy",   "vector", &energy);
+  tree_->Branch("pt",   "vector", &pt);
+  tree_->Branch("eta",   "vector", &eta);
+  tree_->Branch("phi",   "vector", &phi);
   tree_->Branch("motherID",   "vector", &motherID);
+  tree_->Branch("pdgID",   "vector", &pdgID);
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
