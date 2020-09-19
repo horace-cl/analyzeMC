@@ -1,5 +1,6 @@
  // Original Author:  Andrea RIZZI
  //         Created:  Mon, 07 Jul 2014 07:56:38 GMT
+ // Edited by: Horacio Crotte Ledesma
 
  // system include files
  #include <memory>
@@ -34,10 +35,13 @@
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "CommonTools/CandUtils/interface/Booster.h"
 #include <vector>
+
+
+
+
  //
  // class declaration
  //
-
 class MiniAODGenPartAnalyzer : public edm::EDAnalyzer {
   public:
     explicit MiniAODGenPartAnalyzer(const edm::ParameterSet&);
@@ -53,25 +57,62 @@ class MiniAODGenPartAnalyzer : public edm::EDAnalyzer {
     TLorentzVector gen_b_p4, gen_phi_p4, gen_kaon_p4, gen_muon1_p4, gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
     TLorentzVector gen_b_p4CM, gen_phi_p4CM, gen_kaon_p4CM, gen_muon1_p4CM, gen_muon2_p4CM, gen_gamma1_p4CM, gen_gamma2_p4CM;
     TTree*         tree_;
+    int            numBplus;
 
     edm::EDGetTokenT<edm::View<reco::GenParticle> > prunedGenToken_;
     edm::EDGetTokenT<edm::View<pat::PackedGenParticle> > packedGenToken_;
     float costhetaL, costhetaKL;
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//Constructor?
+//
 MiniAODGenPartAnalyzer::MiniAODGenPartAnalyzer(const edm::ParameterSet& iConfig):
 prunedGenToken_(consumes<edm::View<reco::GenParticle> >(iConfig.getParameter<edm::InputTag>("pruned"))),
 packedGenToken_(consumes<edm::View<pat::PackedGenParticle> >(iConfig.getParameter<edm::InputTag>("packed"))),
-costhetaL(-2.0), costhetaKL(-2.0)
+numBplus(0), costhetaL(-2.0), costhetaKL(-2.0)
 {
 }
 
 
+
+
+
+
+
+
+
+
+
+//
+//Destructor?
+//
 MiniAODGenPartAnalyzer::~MiniAODGenPartAnalyzer()
 {
 }
 
+
+
+
+
+
 //Check recursively if any ancestor of particle is the given one
+//HCL I added a counter, so I can know how many ancestors the child has until it reaches the true ancestor
+//HCL I have my doubts it works since the counter is increaing every time `isAncestor` is called! 
+//HCL What if it has more than one mother?
 bool MiniAODGenPartAnalyzer::isAncestor(const reco::Candidate* ancestor, const reco::Candidate * particle, int & calls)
 {
   //particle is already the ancestor
@@ -88,6 +129,14 @@ bool MiniAODGenPartAnalyzer::isAncestor(const reco::Candidate* ancestor, const r
     return false;
 }
 
+
+
+
+
+
+
+
+
 void
 MiniAODGenPartAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
@@ -95,10 +144,12 @@ MiniAODGenPartAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup&
   using namespace reco;
   using namespace pat;
 
+  //HCL I'd rather this variable to be passed with cmsRun
   bool debug = false;
   bool iskaon, isMuon1, isMuon2;
 
 
+  //HCL What we want to save
   gen_b_p4.SetPxPyPzE(0.,0.,0.,0.);
   gen_kaon_p4.SetPxPyPzE(0.,0.,0.,0.);
   gen_muon1_p4.SetPxPyPzE(0.,0.,0.,0.);
@@ -114,6 +165,7 @@ MiniAODGenPartAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup&
   gen_gamma2_p4CM.SetPxPyPzE(0.,0.,0.,0.);
 
   // Pruned particles are the one containing "important" stuff
+  //HCL Are pruned  particles the same ones Jhovanny is using?
   Handle<edm::View<reco::GenParticle> > pruned;
   iEvent.getByToken(prunedGenToken_,pruned);
 
@@ -122,14 +174,15 @@ MiniAODGenPartAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup&
   Handle<edm::View<pat::PackedGenParticle> > packed;
   iEvent.getByToken(packedGenToken_,packed);
 
-  //let's try to find all status1 originating directly from a B meson decay 
+  //let's try to find all status1 originating directly from a B+(-) meson decay 
 
   for(size_t i=0; i<pruned->size();i++){
     iskaon=false;
     isMuon2=false;
     isMuon1=false;
     if(abs((*pruned)[i].pdgId()) == 521){
-    //if(abs((*pruned)[i].pdgId()) > 500 && abs((*pruned)[i].pdgId()) <600){
+      
+      //HCL instantiate the Candidate and save its 4 momentum
       const Candidate * bMeson = &(*pruned)[i];
       gen_b_p4.SetPtEtaPhiM(bMeson->pt(),bMeson->eta(),bMeson->phi(),bMeson->mass());
 
@@ -138,12 +191,14 @@ MiniAODGenPartAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup&
         std::cout << "  found daugthers: " << std::endl;
       }
       
+      //Look in the packed container for all particles 
       for(size_t j=0; j<packed->size();j++){
         int Ncalls=0;
         //get the pointer to the first survied ancestor of a given packed GenParticle in the prunedCollection 
         const Candidate * motherInPrunedCollection = (*packed)[j].mother(0);
         //Lets check if the daughter particles are K+(321) and muons(13)
         if(motherInPrunedCollection != nullptr && isAncestor( bMeson , motherInPrunedCollection, Ncalls)){
+          numBplus+=1;
           if (abs((*packed)[j].pdgId()) == 321){
             iskaon=true;
             gen_kaon_p4.SetPtEtaPhiM((*packed)[j].pt(),(*packed)[j].eta(),(*packed)[j].phi(),(*packed)[j].mass());
@@ -238,6 +293,7 @@ MiniAODGenPartAnalyzer::beginJob()
   //tree_->Branch("number_daughters",  &number_daughters);
   tree_->Branch("costhetaL",  &costhetaL);
   tree_->Branch("costhetaKL",  &costhetaKL);
+  tree_->Branch("numBplus", &numBplus);
 
   //tree_->Branch("Nbplus", &bplus);
 }
