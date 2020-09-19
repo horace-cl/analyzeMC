@@ -13,7 +13,7 @@ path2 = '/eos/user/h/hcrottel/PrivateMC-2020-b_kmumu_PHSPS/crab_PrivateMC-2020-b
 files = glob(path1+"step0*")
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-		    ['file:'+file_ for file_ in files[:1]]  
+		    ['file:'+file_ for file_ in files[:10]]  
 				  )
 		)
 
@@ -33,7 +33,7 @@ process.source = cms.Source("PoolSource",
 
 process.TFileService = cms.Service("TFileService",
 #        fileName = cms.string('Rootuple_BstoJpsiphi_2018_MiniAOD.root'),
-         fileName = cms.string('GEN-SIM.root'),                                  
+         fileName = cms.string('GEN-SIM10.root'),                                  
 )
 
 process.demo = cms.EDAnalyzer('MCanalyzer'

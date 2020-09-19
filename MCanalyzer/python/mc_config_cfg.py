@@ -45,7 +45,7 @@ path2 = '/eos/user/h/hcrottel/PrivateMC-2020-b_kmumu_PHSPS/crab_PrivateMC-2020-b
 files = glob(path1+"step3*")
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-		['file:'+file_ for file_ in files[:1]]	
+		['file:'+file_ for file_ in files[:10]]	
 	)
 )
 
@@ -65,7 +65,7 @@ process.MiniSim = cms.EDAnalyzer('MiniAODGenPartAnalyzer',
 #else:
 #	file_name = 'MINI-SIM2.root'
 #print(file_name)
-file_name = 'MINIAODSIM_recopart'+'.root'
+file_name = 'MINIAODSIM_recopart10'+'.root'
 process.TFileService = cms.Service("TFileService",
         fileName = cms.string(file_name),                                  
 )
