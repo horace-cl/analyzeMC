@@ -1,8 +1,38 @@
 import FWCore.ParameterSet.Config as cms
+#import FWCore.ParameterSet.VarParsing as VarParsing
+
 from glob import glob
 import sys
 
-process = cms.Process("Demo")
+#options = VarParsing('python')
+
+#options.register('debug', False,
+#    VarParsing.multiplicity.singleton,
+#		    VarParsing.varType.bool,
+#				    "Debugging couts"
+#						)
+
+#options.register('reportEvery', 100,
+#    VarParsing.multiplicity.singleton,		    VarParsing.varType.int,
+#				    "report every N events"
+#						)
+#
+#options.register('maxFiles', -1,
+#    VarParsing.multiplicity.singleton,
+#		    VarParsing.varType.int,
+#				    "Maximum number of files to process"
+#						)
+#options.register('tg', 'genparticles_MINIAODSIM',
+#    VarParsing.multiplicity.singleton,
+#		    VarParsing.varType.string,
+#				    "tag for outputfile"
+#						)
+#
+#options.parseArguments()
+#options.setDefault('tag', options.tg)
+#
+
+process = cms.Process("MINIAODSIM")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 
@@ -15,7 +45,7 @@ path2 = '/eos/user/h/hcrottel/PrivateMC-2020-b_kmumu_PHSPS/crab_PrivateMC-2020-b
 files = glob(path1+"step3*")
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-		['file:'+file_ for file_ in files[:10]]	
+		['file:'+file_ for file_ in files[:1]]	
 	)
 )
 
@@ -29,12 +59,13 @@ process.MiniSim = cms.EDAnalyzer('MiniAODGenPartAnalyzer',
 
 
 #OUTPUT
-print(sys.argv)
-if len(sys.argv)>2:
-	file_name = sys.argv[2]+'.root'
-else:
-	file_name = 'MINI-SIM2.root'
-print(file_name)
+#print(sys.argv)
+#if len(sys.argv)>2:
+#	file_name = sys.argv[2]+'.root'
+#else:
+#	file_name = 'MINI-SIM2.root'
+#print(file_name)
+file_name = 'MINIAODSIM_recopart'+'.root'
 process.TFileService = cms.Service("TFileService",
         fileName = cms.string(file_name),                                  
 )

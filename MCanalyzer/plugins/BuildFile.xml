@@ -33,6 +33,6 @@
 <use   name="TrackingTools/IPTools"/>
 <use   name="PhysicsTools/PatUtils"/>
 <use   name="pythia8"/>
-
+<use   name="FWCore/ParameterSet"/>
 <flags EDM_PLUGIN="1"/>
 

@@ -57,10 +57,9 @@ class MiniAODGenPartAnalyzer : public edm::EDAnalyzer {
     TLorentzVector gen_b_p4, gen_phi_p4, gen_kaon_p4, gen_muon1_p4, gen_muon2_p4, gen_gamma1_p4, gen_gamma2_p4;
     TLorentzVector gen_b_p4CM, gen_phi_p4CM, gen_kaon_p4CM, gen_muon1_p4CM, gen_muon2_p4CM, gen_gamma1_p4CM, gen_gamma2_p4CM;
     TTree*         tree_;
-    int            numBplus;
-
     edm::EDGetTokenT<edm::View<reco::GenParticle> > prunedGenToken_;
     edm::EDGetTokenT<edm::View<pat::PackedGenParticle> > packedGenToken_;
+    int            numBplus;
     float costhetaL, costhetaKL;
 };
 
